@@ -2,11 +2,15 @@ package com.mc6m.mod.dlampmod;
 
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import com.mc6m.mod.dlampmod.save.SetColorType;
-import com.mc6m.mod.dlampmod.tools.BlockPos;
 import com.mc6m.mod.dlampmod.tools.Tools;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.sound.SoundEvent;
 
 import java.util.Map;
 import java.util.Random;
@@ -31,47 +35,58 @@ public class DLampBlock extends Block {
         setStepSound(new SoundType("grass", 1.0F, 1.0F));
     }
 
-//    public void onBlockClicke(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {
-//        if (Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) == 1
-//                && Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) != 0
-//                && p5EP != null
-//                && par2 * par3 != 0
-//                && par2 * par4 != 0) {
-//
-//            par1World.setBlockState(new BlockPos(par2, par3, par4), Block.getStateById(4));
-//        }
-//        System.out.println("debug tick.");
-//    }
+    public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {
+        if (Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) == 1
+                && Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) != 0
+                && p5EP != null
+                && par2 * par3 != 0
+                && par2 * par4 != 0) {
+            par1World.setBlockState(new BlockPos(par2, par3, par4), Block.getStateById(4));
 
-    public void onBlockAdded(World worldIn, int x, int y, int z) {
-        setBlockColor(worldIn, new BlockPos(x, y, z));
+        }
+        System.out.println("debug tick.");
     }
 
-    @Override
-    public void onNeighborBlockChange(World worldIn, int x, int y, int z, Block blockIn) {
-        setBlockColor(worldIn, new BlockPos(x, y, z));
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
+        setBlockColor(worldIn, pos);
+    }
+
+//    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
 //        if (!worldIn.isRemote && worldIn.getSeed() != 0) {
-//            if (isOn && !worldIn.isBlockIndirectlyGettingPowered(x, y, z)) {
-//                worldIn.scheduleBlockUpdate(x, y, z, this, 4);
-//                setColor(worldIn, new BlockPos(x, y, z), false);
-//            } else if (!this.isOn && worldIn.isBlockIndirectlyGettingPowered(x, y, z)) {
-//                worldIn.setBlock(x, y, z, DLampMOD.lit_dBlock, 0, 2);
-//                setColor(worldIn, new BlockPos(x, y, z), true);
+//            if (this.isOn && !worldIn.isBlockPowered(pos)) {
+//                worldIn.scheduleUpdate(pos, this, 4);
+//                setColor(worldIn, pos, false);
+//            } else if (!this.isOn && worldIn.isBlockPowered(pos)) {
+//                worldIn.setBlockState(pos, DLampMOD.lit_dBlock.getDefaultState(), 2);
+//                setColor(worldIn, pos, true);
 //            }
 //        }
+//    }
+
+    @Override
+    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block blockIn) {
+        if (!worldIn.isRemote && worldIn.getSeed() != 0) {
+            if (this.isOn && !worldIn.isBlockPowered(pos)) {
+                worldIn.scheduleUpdate(pos, this, 4);
+                setColor(worldIn, pos, false);
+            } else if (!this.isOn && worldIn.isBlockPowered(pos)) {
+                worldIn.setBlockState(pos, DLampMOD.lit_dBlock.getDefaultState(), 2);
+                setColor(worldIn, pos, true);
+            }
+        }
     }
 
-    public void updateTick(World worldIn, int x, int y, int z, Random rand) {
-        setBlockColor(worldIn, new BlockPos(x, y, z));
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        setBlockColor(worldIn, pos);
     }
 
     private void setBlockColor(World worldIn, BlockPos pos) {
         if (!worldIn.isRemote && worldIn.getSeed() != 0) {
-            if (this.isOn && !worldIn.isBlockIndirectlyGettingPowered(pos.getX(), pos.getY(), pos.getZ())) {
-                worldIn.setBlock(pos.getX(), pos.getY(), pos.getZ(), DLampMOD.dBlock, 0, 2);
+            if (this.isOn && !worldIn.isBlockPowered(pos)) {
+                worldIn.setBlockState(pos, DLampMOD.dBlock.getDefaultState(), 2);
                 setColor(worldIn, pos, false);
-            } else if (!this.isOn && worldIn.isBlockIndirectlyGettingPowered(pos.getX(), pos.getY(), pos.getZ())) {
-                worldIn.setBlock(pos.getX(), pos.getY(), pos.getZ(), DLampMOD.lit_dBlock, 0, 2);
+            } else if (!this.isOn && worldIn.isBlockPowered(pos)) {
+                worldIn.setBlockState(pos, DLampMOD.lit_dBlock.getDefaultState(), 2);
                 setColor(worldIn, pos, true);
             }
         }

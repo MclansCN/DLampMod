@@ -1,9 +1,9 @@
 package com.mc6m.mod.dlampmod.save;
 
 import com.mc6m.mod.dlampmod.DLampMOD;
-import com.mc6m.mod.dlampmod.tools.BlockPos;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
@@ -85,14 +85,14 @@ public class DLWorldSavedData extends WorldSavedData {
         did2pos.clear();
         pos2did.clear();
         System.out.println("++++++++++++++++++++++++++++++++++++++++  Read-NBT-Start");
-        Set<String> set = nbt.func_150296_c();
+        Set<String> set = nbt.getKeySet();
         for (String did : set) {
             NBTTagList list = (NBTTagList) nbt.getTag(did);
             if (list == null) {
                 list = new NBTTagList();
             }
             for (int i = list.tagCount() - 1; i >= 0; --i) {
-                NBTTagCompound compound = list.getCompoundTagAt(i);
+                NBTTagCompound compound = (NBTTagCompound) list.get(i);
                 double x = compound.getDouble("x");
                 double y = compound.getDouble("y");
                 double z = compound.getDouble("z");
@@ -150,8 +150,7 @@ public class DLWorldSavedData extends WorldSavedData {
     }
 
     public static DLWorldSavedData get(World world) {
-//        MapStorage storage = world.getPerWorldStorage();
-        MapStorage storage = world.perWorldStorage;
+        MapStorage storage = world.getPerWorldStorage();
         DLWorldSavedData instance = (DLWorldSavedData) storage.loadData(DLWorldSavedData.class, DATA_NAME);
         if (instance == null) {
             instance = new DLWorldSavedData(DATA_NAME);

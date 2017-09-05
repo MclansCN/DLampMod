@@ -2,21 +2,18 @@ package com.mc6m.mod.dlampmod.gui;
 
 import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.DLampVirtualDevice;
-import com.mc6m.mod.dlampmod.tools.BlockPos;
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-import sun.awt.GlobalCursorManager;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +29,7 @@ public class DLampBindingGUI extends GuiScreen {
     public DLampBindingGUI(GuiScreen parent, PlayerInteractEvent event, World world) {
         parentScreen = parent; //记下是哪个界面打开了它,以便以后返回那个界面
         //在这里初始化与界面无关的数据,或者是只需初始化一次的数据.
-        this.pos = new BlockPos(event.x, event.y, event.z);
+        this.pos = event.pos;
         this.player = event.entityPlayer;
         this.world = world;
     }
@@ -41,7 +38,6 @@ public class DLampBindingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
-
         int i = 20;
         for (Object dido : DLampMOD.api.getDeviceList()) {
             String did = dido.toString();
@@ -85,11 +81,10 @@ public class DLampBindingGUI extends GuiScreen {
             return;
         }
         String did = devicebuttonmap.get(button.id);
-//        IBlockState block = world.getBlockState(pos);
-        String blockName = world.getBlock(pos.getX(), pos.getY(), pos.getZ()).getUnlocalizedName();
-        if (blockName.equalsIgnoreCase("tile.dlampmod.dlamp")) {
+        IBlockState block = world.getBlockState(pos);
+        if (block.toString().equalsIgnoreCase("dlampmod:dLamp")) {
             DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), false));
-        } else if (blockName.equalsIgnoreCase("tile.dlampmod.lit_dlamp")) {
+        } else if (block.toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
             DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), true));
         }
 
@@ -99,18 +94,18 @@ public class DLampBindingGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int par1, int par2, float par3) {
-        if (initOK){
+        if (initOK) {
             drawDefaultBackground();
             drawRect((int) (width * 0.1), (int) (height * 0.1), (int) (width * 0.9), (int) (height * 0.8), 0x80FFFFFF);
 
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会被控件(即按键)盖住.
             super.drawScreen(par1, par2, par3);
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会盖在控件(即按键)之上.
-            Minecraft.getMinecraft().fontRenderer.drawString("§l局域网内的矿灯", this.width / 2 - 30, 10, 0xffffff);
-            Minecraft.getMinecraft().fontRenderer.drawString("(请保持设备打开，如设备已经打开仍无发现请重启设备后再试)", this.width / 2 - 120, 30, 0xff0000);
+            Minecraft.getMinecraft().fontRendererObj.drawString("§l局域网内的矿灯", this.width / 2 - 30, 10, 0xffffff);
+            Minecraft.getMinecraft().fontRendererObj.drawString("(请保持设备打开，如设备已经打开仍无发现请重启设备后再试)", this.width / 2 - 120, 30, 0xff0000);
 
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:logo.png"));
+            GlStateManager.color(1.0F, 1.0F, 1.0F);
+            this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
             this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
         }
     }

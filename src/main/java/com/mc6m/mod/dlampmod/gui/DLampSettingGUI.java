@@ -3,22 +3,22 @@ package com.mc6m.mod.dlampmod.gui;
 import cn.zhhl.DLUtil.Device;
 import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
-import com.mc6m.mod.dlampmod.tools.BlockPos;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.Map;
 
 public class DLampSettingGUI extends GuiScreen {
     private GuiScreen parentScreen;
-    private GuiLabel title;
     private GuiButton btnClose;
     private GuiButton mobTargetBtn;
     private GuiButton damageWarningBtn;
@@ -34,10 +34,10 @@ public class DLampSettingGUI extends GuiScreen {
     private boolean initOK = false;
     private Device device;
 
-    public DLampSettingGUI(GuiScreen parent, PlayerInteractEvent event, World world, Device device) {
+    public DLampSettingGUI(GuiScreen parent, BlockPos pos, World world, Device device) {
         parentScreen = parent; //记下是哪个界面打开了它,以便以后返回那个界面
-        //在这里初始化与界面无关的数据,始化一次的数据.
-        this.pos = new BlockPos(event.x, event.y, event.z);
+        //在这里初始化与界面无关的数据,或者是只需初始化一次的数据.
+        this.pos = pos;
         this.dlwsd = DLWorldSavedData.get(world);
         this.settingMap = dlwsd.getSetting(dlwsd.getPos2did().get(pos));
         this.device = device;
@@ -47,6 +47,7 @@ public class DLampSettingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "保存"));
+        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         this.buttonList.add(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "发现怪物警告：" + getBtnName("isMobTarget")));
         this.buttonList.add(dynamicLightBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "动态光源：" + getBtnName("isDynamicLight")));
@@ -58,9 +59,8 @@ public class DLampSettingGUI extends GuiScreen {
         this.buttonList.add(pickupEXPNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取经验通知：" + getBtnName("isPickupEXPNotice")));
         i += 30;
         this.buttonList.add(fishingBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "钓鱼通知：" + getBtnName("isFishing")));
-
         i += 15;
-        this.setColorText = new GuiTextField(fontRendererObj, this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20);
+        this.setColorText = new GuiTextField(1, fontRendererObj, this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20);
         this.setColorText.setMaxStringLength(7);
         this.setColorText.setFocused(true);
         this.setColorText.setText((String) settingMap.get("color"));
@@ -106,23 +106,21 @@ public class DLampSettingGUI extends GuiScreen {
         if (initOK) {
             drawDefaultBackground();
             drawRect((int) (width * 0.1), (int) (height * 0.1), (int) (width * 0.9), (int) (height * 0.8), 0x80FFFFFF);
-
-            //在这里绘制文本或纹理等非控件内容,这里绘制的东西会被控件(即按键)盖住.
+            //在这里绘制文本或纹理等非控件内容,这里绘制的东西会被控件(即按键)盖住.Z
             super.drawScreen(par1, par2, par3);
-
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会盖在控件(即按键)之上.
             if (this.setColorText != null) {
                 this.setColorText.drawTextBox();
-                Minecraft.getMinecraft().fontRenderer.drawString("§l矿灯设置", this.width / 2 - 20, 10, 0xffffff);
+                Minecraft.getMinecraft().fontRendererObj.drawString("§l矿灯设置", this.width / 2 - 20, 10, 0xffffff);
                 if (this.device != null) {
-                    Minecraft.getMinecraft().fontRenderer.drawString("(设备在线)", this.width / 2 - 20, 30, 0x00ff00);
+                    Minecraft.getMinecraft().fontRendererObj.drawString("(设备在线)", this.width / 2 - 20, 30, 0x00ff00);
                 } else {
-                    Minecraft.getMinecraft().fontRenderer.drawString("(设备离线)", this.width / 2 - 20, 30, 0xff0000);
+                    Minecraft.getMinecraft().fontRendererObj.drawString("(设备离线)", this.width / 2 - 20, 30, 0xff0000);
                 }
-                Minecraft.getMinecraft().fontRenderer.drawString("§0设置颜色(格式为#000000，值为0-f)", this.width / 2 + 10, (int) (this.height * 0.1 + 115), 0xffffff);
+                Minecraft.getMinecraft().fontRendererObj.drawString("§0设置颜色(格式为#000000，值为0-f)", this.width / 2 + 10, (int) (this.height * 0.1 + 115), 0xffffff);
 
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:logo.png"));
+                GlStateManager.color(1.0F, 1.0F, 1.0F);
+                this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
                 this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
             } else {
                 System.out.println("setColorText 初始化失败");
@@ -131,7 +129,7 @@ public class DLampSettingGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) {
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (keyCode == Keyboard.KEY_ESCAPE) {
             this.mc.displayGuiScreen(null);
             if (this.mc.currentScreen == null)

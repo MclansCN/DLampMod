@@ -2,21 +2,25 @@ package com.mc6m.mod.dlampmod;
 
 import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, acceptedMinecraftVersions = "[1.7.10]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.8]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
@@ -27,45 +31,50 @@ public class DLampMOD {
     public static DLampBlock dBlock;
     public static DLampBlock lit_dBlock;
     public static DimensionLamp api = new DimensionLamp();
-    public static boolean needUpdate = false;
-    public static String newVersionHomepage = "";
 
     public static ConcurrentHashMap<String, DLampVirtualDevice> virtualdevicemap = new ConcurrentHashMap<String, DLampVirtualDevice>();
 
-    //    @Mod.EventHandler
-    @Mod.EventHandler
+    public static boolean needUpdate = false;
+    public static String newVersionHomepage = "";
+
+    @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         dBlock = new DLampBlock(false);
-        dBlock.setBlockName(DLampMOD.MOD_ID + ".dlamp");
+        dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
+//        dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
         dBlock.setCreativeTab(CreativeTabs.tabRedstone);
-        dBlock.setBlockTextureName("dl_off");
         lit_dBlock = new DLampBlock(true);
-        lit_dBlock.setBlockName(DLampMOD.MOD_ID + ".lit_dlamp");
-        lit_dBlock.setBlockTextureName("dl_on");
+        lit_dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".lit_dlamp");
+//        lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dLamp");
+//        GameRegistry.registerBlock(dBlock);
+//        GameRegistry.registerBlock(lit_dBlock);
         GameRegistry.registerBlock(dBlock, dLampName);
         GameRegistry.registerBlock(lit_dBlock, "lit_dLamp");
         GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.stained_glass_pane, 1, 14), 'X', new ItemStack(Blocks.redstone_torch), '#', new ItemStack(Items.redstone));
 
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(dBlock), 0, new ModelResourceLocation(DLampMOD.MOD_ID + ":" + dLampName, "inventory"));
+
         // 更新
         try {
-            String newVersionStr = Tools.loadURLJson(updateJSON);
-            JSONObject newVersionJson = new JSONObject(newVersionStr);
-            String newVersion = newVersionJson.getJSONObject("promos").getString("1.7.10-recommended");
+        String newVersionStr = Tools.loadURLJson(updateJSON);
+        System.out.println(newVersionStr);
+
+        JSONObject newVersionJson = new JSONObject(newVersionStr);
+            String newVersion = newVersionJson.getJSONObject("promos").getString("1.8-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
         } catch (Exception e) {
             System.out.println(e);
         }
-
         MinecraftForge.EVENT_BUS.register(new DLampLEDManager());
     }
 
-    @Mod.EventHandler
+    @EventHandler
     public void Init(FMLInitializationEvent event) {
 //		DynamicLights.instance.load(event);
     }
 
-    @Mod.EventHandler
+    @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
 
     }

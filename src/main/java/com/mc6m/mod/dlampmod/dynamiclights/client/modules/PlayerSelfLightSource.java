@@ -5,22 +5,23 @@ import com.mc6m.mod.dlampmod.DLampVirtualDevice;
 import com.mc6m.mod.dlampmod.dynamiclights.client.DynamicLights;
 import com.mc6m.mod.dlampmod.dynamiclights.client.IDynamicLightSource;
 import com.mc6m.mod.dlampmod.dynamiclights.client.ItemConfigHelper;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author AtomicStryker
@@ -91,7 +92,7 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
 
         if (thePlayer != null && thePlayer.isEntityAlive() && !DynamicLights.globalLightsOff()) {
             boolean isOpen = false;
-            for (Map.Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
+            for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
                 if (e.getValue().isOnline() && e.getValue().getLEDOn() && e.getValue().dynamicLight()) {
                     isOpen = true;
                     break;
