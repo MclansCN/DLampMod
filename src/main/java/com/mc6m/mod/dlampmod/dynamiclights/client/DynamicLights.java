@@ -1,10 +1,11 @@
 package com.mc6m.mod.dlampmod.dynamiclights.client;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -22,9 +23,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import org.lwjgl.input.Keyboard;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * @author AtomicStryker
@@ -35,7 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * this Mod uses ASM transforming to hook into Minecraft with style and has an
  * API that does't suck. It also uses Forge events to register dropped Items.
  */
-@Mod(modid = "DynamicLights", name = "Dynamic Lights", version = "1.3.9")
+@Mod(modid = "DynamicLights", name = "Dynamic Lights", version = "1.4.3")
 public class DynamicLights {
     private Minecraft mcinstance;
 
@@ -99,9 +104,9 @@ public class DynamicLights {
             }
 
             if (mcinstance.currentScreen == null && toggleButton.isPressed() && System.currentTimeMillis() >= nextKeyTriggerTime) {
-                nextKeyTriggerTime = System.currentTimeMillis() + 1000l;
+                nextKeyTriggerTime = System.currentTimeMillis() + 1000L;
                 globalLightsOff = !globalLightsOff;
-                mcinstance.ingameGUI.getChatGUI().printChatMessage(new ChatComponentText("Dynamic Lights globally " + (globalLightsOff ? "off" : "on")));
+                mcinstance.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation("Dynamic Lights globally " + (globalLightsOff ? "off" : "on")));
 
                 World world = mcinstance.theWorld;
                 if (world != null) {
@@ -129,13 +134,13 @@ public class DynamicLights {
      * Block.getLightValue. Loops active Dynamic Light Sources and if it finds
      * one for the exact coordinates asked, returns the Light value from that source if higher.
      *
-     * @param block Block queried
-     * @param world World queried
-     * @param pos   BlockPos instance of target coords
+     * @param blockState IBlockState queried
+     * @param world      World queried
+     * @param pos        BlockPos instance of target coords
      * @return max(Block.getLightValue, Dynamic Light)
      */
-    public static int getLightValue(Block block, IBlockAccess world, BlockPos pos) {
-        int vanillaValue = block.getLightValue(world, pos);
+    public static int getLightValue(IBlockState blockState, IBlockAccess world, BlockPos pos) {
+        int vanillaValue = blockState.getLightValue(world, pos);
 
         if (instance == null || instance.globalLightsOff || world instanceof WorldServer) {
             return vanillaValue;
@@ -144,6 +149,7 @@ public class DynamicLights {
         if (!world.equals(instance.lastWorld) || instance.lastList == null) {
             instance.lastWorld = world;
             instance.lastList = instance.worldLightsMap.get(world);
+            hackRenderGlobalConcurrently();
         }
 
         int dynamicValue = 0;
@@ -159,6 +165,30 @@ public class DynamicLights {
             }
         }
         return Math.max(vanillaValue, dynamicValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void hackRenderGlobalConcurrently() {
+        try {
+            for (Field f : RenderGlobal.class.getDeclaredFields()) {
+                if (Set.class.isAssignableFrom(f.getType())) {
+                    ParameterizedType fieldType = (ParameterizedType) f.getGenericType();
+                    if (BlockPos.class.equals(fieldType.getActualTypeArguments()[0])) {
+                        f.setAccessible(true);
+                        Set<BlockPos> setLightUpdates = (Set<BlockPos>) f.get(instance.mcinstance.renderGlobal);
+                        if (setLightUpdates instanceof ConcurrentSkipListSet) {
+                            return;
+                        }
+                        ConcurrentSkipListSet<BlockPos> cs = new ConcurrentSkipListSet<BlockPos>(setLightUpdates);
+                        f.set(instance.mcinstance.renderGlobal, cs);
+                        System.out.println("Dynamic Lights successfully hacked Set RenderGlobal.setLightUpdates and replaced it with a ConcurrentSkipListSet!");
+                        return;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

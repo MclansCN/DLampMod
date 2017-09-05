@@ -9,8 +9,8 @@ import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 
@@ -121,6 +121,7 @@ public class DLampSettingGUI extends GuiScreen {
 
                 GlStateManager.color(1.0F, 1.0F, 1.0F);
                 this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
+                this.setGuiSize(this.width, this.height);
                 this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
             } else {
                 System.out.println("setColorText 初始化失败");

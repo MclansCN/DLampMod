@@ -4,7 +4,7 @@ import cn.zhhl.DLUtil.Device;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import com.mc6m.mod.dlampmod.save.SetColorType;
 import com.mc6m.mod.dlampmod.tools.Tools;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Map;

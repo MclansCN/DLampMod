@@ -1,15 +1,14 @@
 package com.mc6m.mod.dlampmod.dynamiclights.client;
 
-import com.mc6m.mod.dlampmod.dynamiclights.client.IDynamicLightSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 
 /**
- *
+ * 
  * @author AtomicStryker
- *
+ * 
  * Container class to keep track of IDynamicLightSource instances. Remembers
  * their last position and calls World updates if they move.
  *
@@ -17,27 +16,27 @@ import net.minecraft.world.EnumSkyBlock;
 public class DynamicLightSourceContainer
 {
     private final IDynamicLightSource lightSource;
-
+    
     private int prevX;
     private int prevY;
     private int prevZ;
-
+    
     private int x;
     private int y;
     private int z;
-
+    
     public DynamicLightSourceContainer(IDynamicLightSource light)
     {
         lightSource = light;
         x = y = z = prevX = prevY = prevZ = 0;
     }
-
+    
     /**
      * Update passed on from the World tick. Checks for the Light Source Entity to be alive,
      * and for it to have changed Coordinates. Marks it's current Block for Update if it has
      * moved. When this method returns true, the Light Source Entity has died and it should
      * be removed from the List!
-     *
+     * 
      * @return true when the Light Source has died, false otherwise
      */
     public boolean onUpdate()
@@ -47,7 +46,7 @@ public class DynamicLightSourceContainer
         {
             return true;
         }
-
+        
         if (hasEntityMoved(ent))
         {
             /*
@@ -61,25 +60,25 @@ public class DynamicLightSourceContainer
             ent.worldObj.checkLightFor(EnumSkyBlock.BLOCK, new BlockPos(x, y, z));
             ent.worldObj.checkLightFor(EnumSkyBlock.BLOCK, new BlockPos(prevX, prevY, prevZ));
         }
-
+        
         return false;
     }
-
+    
     public int getX()
     {
         return x;
     }
-
+    
     public int getY()
     {
         return y;
     }
-
+    
     public int getZ()
     {
         return z;
     }
-
+    
     public IDynamicLightSource getLightSource()
     {
         return lightSource;
@@ -95,7 +94,7 @@ public class DynamicLightSourceContainer
         int newX = MathHelper.floor_double(ent.posX);
         int newY = MathHelper.floor_double(ent.posY);
         int newZ = MathHelper.floor_double(ent.posZ);
-
+        
         if (newX != x || newY != y || newZ != z)
         {
             prevX = x;
@@ -106,10 +105,10 @@ public class DynamicLightSourceContainer
             z = newZ;
             return true;
         }
-
+        
         return false;
     }
-
+    
     @Override
     public boolean equals(Object o)
     {
@@ -123,7 +122,7 @@ public class DynamicLightSourceContainer
         }
         return false;
     }
-
+    
     @Override
     public int hashCode()
     {

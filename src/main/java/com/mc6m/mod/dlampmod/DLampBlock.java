@@ -4,13 +4,13 @@ import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import com.mc6m.mod.dlampmod.save.SetColorType;
 import com.mc6m.mod.dlampmod.tools.Tools;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.sound.SoundEvent;
 
 import java.util.Map;
 import java.util.Random;
@@ -32,7 +32,7 @@ public class DLampBlock extends Block {
         setResistance(10.0f);
         setHarvestLevel("pickaxe", 0);
 //        setSoundType(SoundType.GLASS);
-        setStepSound(new SoundType("grass", 1.0F, 1.0F));
+        setStepSound(SoundType.GLASS);
     }
 
     public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {

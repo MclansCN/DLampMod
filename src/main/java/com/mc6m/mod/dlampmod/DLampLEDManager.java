@@ -8,8 +8,9 @@ import com.mc6m.mod.dlampmod.save.SetColorType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
@@ -54,21 +55,20 @@ public class DLampLEDManager {
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onPlayerInteract(final PlayerInteractEvent event) {
-        if (event.pos == null) {
-            return;
-        }
-        String blockname = event.world.getBlockState(event.pos).getBlock().getRegistryName().toString();
-        if (event.action.equals(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
+    public void onPlayerInteract(final PlayerInteractEvent.RightClickBlock event) {
+        String blockname = event.getWorld().getBlockState(event.getPos()).getBlock().getRegistryName().toString();
+        if (event.getHand().equals(EnumHand.OFF_HAND)
+                && event.getSide().equals(Side.CLIENT)
                 && (blockname.equalsIgnoreCase(DLampMOD.dBlock.getRegistryName().toString()) || blockname.equalsIgnoreCase(DLampMOD.lit_dBlock.getRegistryName().toString()))) {
+            event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
             Timer timerswing = new Timer();
             timerswing.schedule(new TimerTask() {
 
                 @Override
                 public void run() {
                     // TODO Auto-generated method stub
-                    if (dlwsd.getPos2did().containsKey(event.pos)) {
-                        DLampSettingGUI dlsgui = new DLampSettingGUI(Minecraft.getMinecraft().currentScreen, event.pos, world, DLampMOD.api.getDevice(dlwsd.getPos2did().get(event.pos)));
+                    if (dlwsd.getPos2did().containsKey(event.getPos())) {
+                        DLampSettingGUI dlsgui = new DLampSettingGUI(Minecraft.getMinecraft().currentScreen, event.getPos(), world, DLampMOD.api.getDevice(dlwsd.getPos2did().get(event.getPos())));
                         Minecraft.getMinecraft().displayGuiScreen(dlsgui);
                     } else {
                         DLampBindingGUI qrgui = new DLampBindingGUI(Minecraft.getMinecraft().currentScreen, event, world);
@@ -80,23 +80,22 @@ public class DLampLEDManager {
         }
     }
 
-
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     /** 方块被破坏*/
     public void onBreakEvent(BlockEvent.BreakEvent event) {
-        if (event.state != null) {
+        if (event.getState() != null) {
             // 如果是大佬灯方块
-            if (event.state.toString().equalsIgnoreCase("dlampmod:dLamp") || event.state.toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
+            if (event.getState().toString().equalsIgnoreCase("dlampmod:dLamp") || event.getState().toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
                 // 查找表里是否有该位置的数据,如果有则删除对应的绑定
                 DLWorldSavedData dlwsd = DLWorldSavedData.get(world);
-                BlockPos pos = event.pos;
+                BlockPos pos = event.getPos();
                 String did = dlwsd.getPos2did().get(pos);
                 if (did != null) {
                     dlwsd.removeSetting(did);
                     dlwsd.remove(pos);
                     DLampMOD.virtualdevicemap.remove(did);
-                    event.getPlayer().addChatMessage(new ChatComponentText("§f【§3次元矿灯§f】§c数据已被清理，若要继续使用其功能，请重新绑定"));
+                    event.getPlayer().addChatMessage(new TextComponentString("§f【§3次元矿灯§f】§c数据已被清理，若要继续使用其功能，请重新绑定"));
                 }
             }
         }
@@ -106,10 +105,10 @@ public class DLampLEDManager {
     @SubscribeEvent
 /**方块放置*/
     public void onBreakEvent(BlockEvent.PlaceEvent event) {
-        if (event.state != null) {
+        if (event.getState() != null) {
             // 如果是大佬灯方块
-            if (event.state.toString().equalsIgnoreCase("dlampmod:dLamp") || event.state.toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
-                event.player.addChatMessage(new ChatComponentText("§e 右击§f【§3次元矿灯§f】§e方块绑定现实中的设备。"));
+            if (event.getState().toString().equalsIgnoreCase("dlampmod:dLamp") || event.getState().toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
+                event.getPlayer().addChatMessage(new TextComponentString("§e 右击§f【§3次元矿灯§f】§e方块绑定现实中的设备。"));
             }
         }
     }
@@ -118,9 +117,9 @@ public class DLampLEDManager {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onLoadWorldEvent(WorldEvent.Load event) {
-        World world = event.world;
+        World world = event.getWorld();
         if (this.world == null || world.getSeed() != 0) {
-            this.world = event.world;
+            this.world = event.getWorld();
             dlwsd = DLWorldSavedData.get(world);
             Map<BlockPos, String> pos2did = dlwsd.getPos2did();
             DLampMOD.virtualdevicemap.clear();
@@ -158,7 +157,7 @@ public class DLampLEDManager {
                     timerswing.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
+                            Minecraft.getMinecraft().thePlayer.addChatMessage(new TextComponentString("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
                         }
 
                     }, 10000);
@@ -174,9 +173,9 @@ public class DLampLEDManager {
     /** 被怪盯上*/
     public void onLivingSetAttackTarget(LivingSetAttackTargetEvent event) {
         EntityPlayer localplayer = Minecraft.getMinecraft().thePlayer;
-        if (event.target != null
-                && event.target instanceof EntityPlayer
-                && localplayer.equals(event.target)) {
+        if (event.getTarget() != null
+                && event.getTarget() instanceof EntityPlayer
+                && localplayer.equals(event.getTarget())) {
             if (!isTarget) {
                 isTarget = true;
                 multiSetTempRGB(255, 0, 0, SetColorType.IS_MOB_TARGET);
@@ -214,9 +213,9 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 受伤*/
     public void onLivingHurt(LivingHurtEvent event) {
-        if (event.entityLiving instanceof EntityPlayer) {
+        if (event.getEntityLiving() instanceof EntityPlayer) {
             multiFlash(255, 255, 255, 100, SetColorType.IS_DAMAGE_WARNING);
-            float percent = event.entityLiving.getHealth() / event.entityLiving.getMaxHealth();
+            float percent = event.getEntityLiving().getHealth() / event.getEntityLiving().getMaxHealth();
             if (percent < 0.6 && percent > 0.2) {    // 2
                 if (healthlevel != 2) {
                     healthlevel = 2;
@@ -249,8 +248,8 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 低血量*/
     public void onLivingHeal(LivingHealEvent event) {
-        if (event.entityLiving instanceof EntityPlayer) {
-            float percent = event.entityLiving.getHealth() / event.entityLiving.getMaxHealth();
+        if (event.getEntityLiving() instanceof EntityPlayer) {
+            float percent = event.getEntityLiving().getHealth() / event.getEntityLiving().getMaxHealth();
             if (percent < 0.6 && percent > 0.2) {    // 2
                 if (healthlevel != 2) {
                     healthlevel = 2;
@@ -275,7 +274,7 @@ public class DLampLEDManager {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-        if (event.entityLiving instanceof EntityPlayer) {
+        if (event.getEntityLiving() instanceof EntityPlayer) {
             multiReset();
         }
     }
@@ -284,7 +283,7 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 获得经验 */
     public void onPlayerPickupXp(PlayerPickupXpEvent event) {
-        if (event.entityPlayer != null) {
+        if (event.getEntityPlayer() != null) {
             multiFlash(255, 255, 0, 100, SetColorType.IS_PICKUP_EXP_NPTICE);
         }
     }
@@ -294,7 +293,7 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 获得物品 */
     public void onEntityItemPickup(EntityItemPickupEvent event) {
-        if (event.entityPlayer != null) {
+        if (event.getEntityPlayer() != null) {
             multiFlash(0, 255, 255, 100, SetColorType.IS_PICKUP_NOTICE);
         }
     }

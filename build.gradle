@@ -13,15 +13,15 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
 version = "1.0"
 group = "com.zhhl.DLmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "DLmod-1.8.9"
+archivesBaseName = "DLmod-1.9"
+
+minecraft {
+    version = "1.9-12.16.1.1887"
+    runDir = "run"
+    mappings = "snapshot_20160312"
+}
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 compileJava {
@@ -50,12 +50,6 @@ task makeMyJar(dependsOn: ['build'], type: Jar) {
     }
 }
 
-minecraft {
-    version = "1.8.9-11.15.1.1722"
-    runDir = "run"
-    mappings = "stable_20"
-}
-
 repositories {
     mavenLocal()  //使用maven本地库
     mavenCentral()
@@ -77,6 +71,7 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }

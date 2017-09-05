@@ -1,8 +1,8 @@
 package com.mc6m.mod.dlampmod.common;
 
-import java.util.Map;
-
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+
+import java.util.Map;
 
 public class DLFMLCorePlugin implements IFMLLoadingPlugin
 {

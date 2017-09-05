@@ -2,11 +2,12 @@ package com.mc6m.mod.dlampmod;
 
 import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,7 +21,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.8.9]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.9]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
@@ -45,8 +46,9 @@ public class DLampMOD {
         lit_dBlock = new DLampBlock(true);
         lit_dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".lit_dlamp");
         lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dLamp");
-        GameRegistry.registerBlock(dBlock);
-        GameRegistry.registerBlock(lit_dBlock);
+        GameRegistry.register(dBlock);
+        GameRegistry.register(lit_dBlock);
+        GameRegistry.register(new ItemBlock(dBlock).setRegistryName(DLampMOD.MOD_ID, dLampName));
         GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.stained_glass_pane, 1, 14), 'X', new ItemStack(Blocks.redstone_torch), '#', new ItemStack(Items.redstone));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(dBlock), 0, new ModelResourceLocation(DLampMOD.MOD_ID + ":" + dLampName, "inventory"));
@@ -55,7 +57,7 @@ public class DLampMOD {
         try {
             String newVersionStr = Tools.loadURLJson(updateJSON);
             JSONObject newVersionJson = new JSONObject(newVersionStr);
-            String newVersion = newVersionJson.getJSONObject("promos").getString("1.8.9-recommended");
+            String newVersion = newVersionJson.getJSONObject("promos").getString("1.9-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
         } catch (Exception e) {

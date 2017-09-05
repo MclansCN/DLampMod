@@ -5,12 +5,13 @@ import com.mc6m.mod.dlampmod.DLampVirtualDevice;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.input.Keyboard;
@@ -26,11 +27,11 @@ public class DLampBindingGUI extends GuiScreen {
     private EntityPlayer player;
     private boolean initOK = false;
 
-    public DLampBindingGUI(GuiScreen parent, PlayerInteractEvent event, World world) {
+    public DLampBindingGUI(GuiScreen parent, PlayerInteractEvent.RightClickBlock event, World world) {
         parentScreen = parent; //记下是哪个界面打开了它,以便以后返回那个界面
         //在这里初始化与界面无关的数据,或者是只需初始化一次的数据.
-        this.pos = event.pos;
-        this.player = event.entityPlayer;
+        this.pos = event.getPos();
+        this.player = event.getEntityPlayer();
         this.world = world;
     }
 
@@ -38,6 +39,7 @@ public class DLampBindingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
+        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         for (Object dido : DLampMOD.api.getDeviceList()) {
             String did = dido.toString();
@@ -88,7 +90,7 @@ public class DLampBindingGUI extends GuiScreen {
             DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), true));
         }
 
-        player.addChatMessage(new ChatComponentText("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));
+        player.addChatMessage(new TextComponentString("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));
         mc.displayGuiScreen(parentScreen);
     }
 
@@ -106,7 +108,9 @@ public class DLampBindingGUI extends GuiScreen {
 
             GlStateManager.color(1.0F, 1.0F, 1.0F);
             this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
+            this.setGuiSize(this.width, this.height);
             this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
+
         }
     }
 }
