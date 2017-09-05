@@ -1,5 +1,6 @@
 package com.mc6m.mod.dlampmod.dynamiclights.client;
 
+import com.mc6m.mod.dlampmod.dynamiclights.client.IDynamicLightSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -53,7 +54,7 @@ public class DynamicLightSourceContainer
              * This is the critical point, by this we tell Minecraft to ask for the BlockLight value
              * at the coordinates, which in turn triggers they Dynamic Lights response pointing to
              * this Light's value, which in turn has Minecraft update all surrounding Blocks :3
-             *
+             * 
              * We also have to call an update for the previous coordinates, otherwise they would
              * stay lit up.
              */

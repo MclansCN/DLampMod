@@ -12,7 +12,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -50,11 +49,10 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
 
     public boolean fmlOverrideEnable;
 
-
     @EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         config = new Configuration(evt.getSuggestedConfigurationFile());
-        FMLCommonHandler.instance().bus().register(this);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @EventHandler
@@ -69,10 +67,12 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
         config.load();
 
         Property itemsList = config.get(Configuration.CATEGORY_GENERAL, "LightItems", "torch,glowstone=12,glowstone_dust=10,lit_pumpkin,lava_bucket,redstone_torch=10,redstone=10,golden_helmet=14,golden_horse_armor=15");
+//        itemsList.setComment("Item IDs that shine light while held. Armor Items also work when worn. [ONLY ON YOURSELF]");
         itemsList.comment = "Item IDs that shine light while held. Armor Items also work when worn. [ONLY ON YOURSELF]";
         itemsMap = new ItemConfigHelper(itemsList.getString(), 15);
 
         Property notWaterProofList = config.get(Configuration.CATEGORY_GENERAL, "TurnedOffByWaterItems", "torch,lava_bucket");
+//        notWaterProofList.setComment("Item IDs that do not shine light when held in water, have to be present in LightItems.");
         notWaterProofList.comment = "Item IDs that do not shine light when held in water, have to be present in LightItems.";
         notWaterProofItems = new ItemConfigHelper(notWaterProofList.getString(), 1);
 
@@ -130,4 +130,5 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
     public int getLightLevel() {
         return lightLevel;
     }
+
 }

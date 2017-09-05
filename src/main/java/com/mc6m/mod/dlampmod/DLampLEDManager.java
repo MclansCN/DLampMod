@@ -58,9 +58,9 @@ public class DLampLEDManager {
         if (event.pos == null) {
             return;
         }
-        String blockname = event.world.getBlockState(event.pos).toString();
+        String blockname = event.world.getBlockState(event.pos).getBlock().getRegistryName().toString();
         if (event.action.equals(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
-                && (blockname.equalsIgnoreCase("dlampmod:dLamp") || blockname.equalsIgnoreCase("dlampmod:lit_dLamp"))) {
+                && (blockname.equalsIgnoreCase(DLampMOD.dBlock.getRegistryName().toString()) || blockname.equalsIgnoreCase(DLampMOD.lit_dBlock.getRegistryName().toString()))) {
             Timer timerswing = new Timer();
             timerswing.schedule(new TimerTask() {
 
@@ -104,7 +104,7 @@ public class DLampLEDManager {
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    /**方块放置*/
+/**方块放置*/
     public void onBreakEvent(BlockEvent.PlaceEvent event) {
         if (event.state != null) {
             // 如果是大佬灯方块
@@ -113,6 +113,7 @@ public class DLampLEDManager {
             }
         }
     }
+
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
