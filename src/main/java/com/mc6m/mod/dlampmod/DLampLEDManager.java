@@ -61,6 +61,7 @@ public class DLampLEDManager {
                 && event.getSide().equals(Side.CLIENT)
                 && (blockname.equalsIgnoreCase(DLampMOD.dBlock.getRegistryName().toString()) || blockname.equalsIgnoreCase(DLampMOD.lit_dBlock.getRegistryName().toString()))) {
             event.getEntityPlayer().swingArm(EnumHand.MAIN_HAND);
+
             Timer timerswing = new Timer();
             timerswing.schedule(new TimerTask() {
 

@@ -89,6 +89,7 @@ public class DLampBlock extends Block {
             if (dlvd != null) {
                 dlvd.setLightOpen(isOpen);
             }
+
         }
         if (settingMap != null && dlvd != null) {
             String colorStr = (String) settingMap.get("color");

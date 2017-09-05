@@ -21,9 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DLampBindingGUI extends GuiScreen {
     private GuiScreen parentScreen;
-    private GuiListButton btn;
     private GuiButton btnClose;
-    private GuiLabel notice;
     private BlockPos pos;
     private ConcurrentHashMap<Integer, String> devicebuttonmap = new ConcurrentHashMap<Integer, String>();
     private World world;
@@ -41,8 +39,8 @@ public class DLampBindingGUI extends GuiScreen {
     public void initGui() {
         //每当界面被打开时调用
         //这里部署控件
-        this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
-        this.labelList.add(notice = new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
+        this.addButton(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
+        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         for (Object dido : DLampMOD.api.getDeviceList()) {
             String did = dido.toString();
@@ -52,12 +50,12 @@ public class DLampBindingGUI extends GuiScreen {
                 DLampVirtualDevice device = DLampMOD.virtualdevicemap.get(did);
                 btnname = "§e" + device.getName();
                 GuiButton b;
-                this.buttonList.add(b = new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
+                this.addButton(b = new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
                 b.enabled = false;
             } else {
                 String mac = DLampMOD.api.getDevice(did).getMac();
                 btnname = "次元矿灯(" + mac.substring(mac.length() - 6) + ")";
-                this.buttonList.add(new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
+                this.addButton(new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
             }
 
             i += 30;
@@ -113,7 +111,6 @@ public class DLampBindingGUI extends GuiScreen {
             this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
             this.setGuiSize(this.width, this.height);
             this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
-
         }
     }
 }

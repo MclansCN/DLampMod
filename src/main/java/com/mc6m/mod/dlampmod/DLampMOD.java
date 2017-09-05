@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.9.4]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION,updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.10.2]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
@@ -57,7 +57,7 @@ public class DLampMOD {
         try {
             String newVersionStr = Tools.loadURLJson(updateJSON);
             JSONObject newVersionJson = new JSONObject(newVersionStr);
-            String newVersion = newVersionJson.getJSONObject("promos").getString("1.9.4-recommended");
+            String newVersion = newVersionJson.getJSONObject("promos").getString("1.10.2-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
         } catch (Exception e) {

@@ -46,19 +46,19 @@ public class DLampSettingGUI extends GuiScreen {
     public void initGui() {
         //每当界面被打开时调用
         //这里部署控件
-        this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "保存"));
+        this.addButton(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "保存"));
         this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
-        this.buttonList.add(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "发现怪物警告：" + getBtnName("isMobTarget")));
-        this.buttonList.add(dynamicLightBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "动态光源：" + getBtnName("isDynamicLight")));
+        this.addButton(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "发现怪物警告：" + getBtnName("isMobTarget")));
+        this.addButton(dynamicLightBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "动态光源：" + getBtnName("isDynamicLight")));
         i += 30;
-        this.buttonList.add(damageWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "被攻击警告：" + getBtnName("isDamageWarning")));
-        this.buttonList.add(pickupNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取物品通知：" + getBtnName("isPickupNotice")));
+        this.addButton(damageWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "被攻击警告：" + getBtnName("isDamageWarning")));
+        this.addButton(pickupNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取物品通知：" + getBtnName("isPickupNotice")));
         i += 30;
-        this.buttonList.add(healthWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "低血量警告：" + getBtnName("isHealthWarning")));
-        this.buttonList.add(pickupEXPNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取经验通知：" + getBtnName("isPickupEXPNotice")));
+        this.addButton(healthWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "低血量警告：" + getBtnName("isHealthWarning")));
+        this.addButton(pickupEXPNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取经验通知：" + getBtnName("isPickupEXPNotice")));
         i += 30;
-        this.buttonList.add(fishingBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "钓鱼通知：" + getBtnName("isFishing")));
+        this.addButton(fishingBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "钓鱼通知：" + getBtnName("isFishing")));
         i += 15;
         this.setColorText = new GuiTextField(1, fontRendererObj, this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20);
         this.setColorText.setMaxStringLength(7);
@@ -123,7 +123,6 @@ public class DLampSettingGUI extends GuiScreen {
                 this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
                 this.setGuiSize(this.width, this.height);
                 this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
-
             } else {
                 System.out.println("setColorText 初始化失败");
             }
