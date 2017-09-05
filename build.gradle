@@ -1,0 +1,95 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+    }
+}
+
+apply plugin: 'forge'
+
+version = "1.0"
+group = "com.zhhl.DLmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "DLmod-1.7.10"
+
+minecraft {
+    version = "1.7.10-10.13.4.1558-1.7.10"
+    runDir = "run"
+}
+
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
+}
+
+task makeMyJar(dependsOn: ['build'], type: Jar) {
+    archiveName = archivesBaseName + '-Release.jar'
+//    from('build/classes/main')
+//    from('build/resources/main')
+    from(project.zipTree('D:\\code\\MCmod\\libs\\json-20170516.jar'))
+    from(project.zipTree('D:\\code\\MCmod\\libs\\dllib-201709041716.jar'))
+    from(project.zipTree('build\\libs\\' + archivesBaseName + '-' + version + '.jar'))
+    destinationDir = file('build\\libs')
+    include('com\\mc6m\\**\\*.class')
+    include('com\\mclans\\**\\*.class')
+    include('cn\\zhhl\\**\\*.class')
+    include('org\\json\\**\\*.class')
+    include('assets\\**')
+    include('mcmod.info')
+    manifest {
+        attributes(
+                "Manifest-Version": version,
+                "ModSide": "CLIENT",
+                "FMLCorePlugin": "com.mc6m.mod.dlampmod.common.DLFMLCorePlugin",
+                "FMLCorePluginContainsFMLMod": "true"
+        )
+    }
+}
+
+
+repositories {
+    mavenLocal()  //使用maven本地库
+    mavenCentral()
+}
+dependencies {
+    compile "com.zhhl:dllib:201709041716"
+    compile "org.json:json:20170516"
+}
+
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+jar {
+    manifest {
+        attributes(
+                "Manifest-Version": 1.0,
+                "ModSide": "CLIENT",
+                "FMLCorePlugin": "com.mc6m.mod.dlampmod.common.DLFMLCorePlugin",
+                "FMLCorePluginContainsFMLMod": "true"
+        )
+    }
+
+}

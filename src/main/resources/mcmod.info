@@ -1,0 +1,16 @@
+[
+{
+  "modid": "dlampmod",
+  "name": "Dimesion Lamp",
+  "description": "Dimesion Lamp single player mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Dr.JIN"],
+  "credits": "Designed by mclans.com",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
