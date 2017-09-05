@@ -116,7 +116,7 @@ public class DLWorldSavedData extends WorldSavedData {
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound nbt) {
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
         System.out.println("++++++++++++++++++++++++++++++++++++++++  Write-NBT-Start");
         for (String did : did2pos.keySet()) {
             NBTTagList list = new NBTTagList();
@@ -147,11 +147,12 @@ public class DLWorldSavedData extends WorldSavedData {
         }
         System.out.println(did2pos);
         System.out.println("++++++++++++++++++++++++++++++++++++++++  Write-NBT-End");
+        return nbt;
     }
 
     public static DLWorldSavedData get(World world) {
         MapStorage storage = world.getPerWorldStorage();
-        DLWorldSavedData instance = (DLWorldSavedData) storage.loadData(DLWorldSavedData.class, DATA_NAME);
+        DLWorldSavedData instance = (DLWorldSavedData) storage.getOrLoadData(DLWorldSavedData.class, DATA_NAME);
         if (instance == null) {
             instance = new DLWorldSavedData(DATA_NAME);
             storage.setData(DATA_NAME, instance);

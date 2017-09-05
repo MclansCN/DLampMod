@@ -123,6 +123,7 @@ public class DLampSettingGUI extends GuiScreen {
                 this.mc.renderEngine.bindTexture(new ResourceLocation("dlampmod:textures/logo.png"));
                 this.setGuiSize(this.width, this.height);
                 this.drawTexturedModalRect(this.width / 2 - 150, (int) (this.height * 0.1 + 140), 0, 0, 75, 25);
+
             } else {
                 System.out.println("setColorText 初始化失败");
             }

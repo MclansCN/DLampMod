@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
+import net.minecraft.client.gui.GuiListButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DLampBindingGUI extends GuiScreen {
     private GuiScreen parentScreen;
+    private GuiListButton btn;
     private GuiButton btnClose;
+    private GuiLabel notice;
     private BlockPos pos;
     private ConcurrentHashMap<Integer, String> devicebuttonmap = new ConcurrentHashMap<Integer, String>();
     private World world;
@@ -39,7 +42,7 @@ public class DLampBindingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
-        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
+        this.labelList.add(notice = new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         for (Object dido : DLampMOD.api.getDeviceList()) {
             String did = dido.toString();

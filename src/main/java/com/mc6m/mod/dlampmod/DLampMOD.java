@@ -21,12 +21,12 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.9]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.9.4]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
     public static final String MOD_VERSION = "1.0.0";
-    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-LowMCVersion.json";
+    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-HighMCVersion.json";
 
     public static String dLampName = "dLamp";
     public static DLampBlock dBlock;
@@ -39,25 +39,25 @@ public class DLampMOD {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+//        JedisPoolConfig config = new JedisPoolConfig();
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
         dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
-        dBlock.setCreativeTab(CreativeTabs.tabRedstone);
+        dBlock.setCreativeTab(CreativeTabs.REDSTONE);
         lit_dBlock = new DLampBlock(true);
         lit_dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".lit_dlamp");
         lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dLamp");
         GameRegistry.register(dBlock);
         GameRegistry.register(lit_dBlock);
         GameRegistry.register(new ItemBlock(dBlock).setRegistryName(DLampMOD.MOD_ID, dLampName));
-        GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.stained_glass_pane, 1, 14), 'X', new ItemStack(Blocks.redstone_torch), '#', new ItemStack(Items.redstone));
+        GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.STAINED_GLASS_PANE, 1, 14), 'X', new ItemStack(Blocks.REDSTONE_TORCH), '#', new ItemStack(Items.REDSTONE));
 
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(dBlock), 0, new ModelResourceLocation(DLampMOD.MOD_ID + ":" + dLampName, "inventory"));
-
         // 更新
         try {
             String newVersionStr = Tools.loadURLJson(updateJSON);
             JSONObject newVersionJson = new JSONObject(newVersionStr);
-            String newVersion = newVersionJson.getJSONObject("promos").getString("1.9-recommended");
+            String newVersion = newVersionJson.getJSONObject("promos").getString("1.9.4-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
         } catch (Exception e) {

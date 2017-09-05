@@ -21,7 +21,7 @@ public class DLampBlock extends Block {
 
 
     public DLampBlock(boolean isOn) {
-        super(Material.ground);
+        super(Material.GROUND);
         // TODO Auto-generated constructor stub
         this.isOn = isOn;
 
@@ -31,8 +31,7 @@ public class DLampBlock extends Block {
         setHardness(1.5f);
         setResistance(10.0f);
         setHarvestLevel("pickaxe", 0);
-//        setSoundType(SoundType.GLASS);
-        setStepSound(SoundType.GLASS);
+        setSoundType(SoundType.GLASS);
     }
 
     public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {
@@ -51,20 +50,7 @@ public class DLampBlock extends Block {
         setBlockColor(worldIn, pos);
     }
 
-//    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
-//        if (!worldIn.isRemote && worldIn.getSeed() != 0) {
-//            if (this.isOn && !worldIn.isBlockPowered(pos)) {
-//                worldIn.scheduleUpdate(pos, this, 4);
-//                setColor(worldIn, pos, false);
-//            } else if (!this.isOn && worldIn.isBlockPowered(pos)) {
-//                worldIn.setBlockState(pos, DLampMOD.lit_dBlock.getDefaultState(), 2);
-//                setColor(worldIn, pos, true);
-//            }
-//        }
-//    }
-
-    @Override
-    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block blockIn) {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
         if (!worldIn.isRemote && worldIn.getSeed() != 0) {
             if (this.isOn && !worldIn.isBlockPowered(pos)) {
                 worldIn.scheduleUpdate(pos, this, 4);
