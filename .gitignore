@@ -17,3 +17,7 @@
 # include git important files
 !.gitmodules
 !.gitignore
+
+# include sourcecode
+!dllib-201709041716.jar
+!json-20170516.jar
