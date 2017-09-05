@@ -19,7 +19,6 @@ public class DLampBlock extends Block {
 
     private final boolean isOn;
 
-
     public DLampBlock(boolean isOn) {
         super(Material.GROUND);
         // TODO Auto-generated constructor stub
@@ -50,7 +49,7 @@ public class DLampBlock extends Block {
         setBlockColor(worldIn, pos);
     }
 
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_neighborChanged_5_) {
         if (!worldIn.isRemote && worldIn.getSeed() != 0) {
             if (this.isOn && !worldIn.isBlockPowered(pos)) {
                 worldIn.scheduleUpdate(pos, this, 4);
@@ -89,7 +88,6 @@ public class DLampBlock extends Block {
             if (dlvd != null) {
                 dlvd.setLightOpen(isOpen);
             }
-
         }
         if (settingMap != null && dlvd != null) {
             String colorStr = (String) settingMap.get("color");

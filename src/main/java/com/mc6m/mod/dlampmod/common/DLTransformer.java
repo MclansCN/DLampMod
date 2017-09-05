@@ -1,41 +1,50 @@
 package com.mc6m.mod.dlampmod.common;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.Printer;
-import org.objectweb.asm.util.Textifier;
-import org.objectweb.asm.util.TraceMethodVisitor;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Iterator;
 
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
+import org.objectweb.asm.util.Printer;
+import org.objectweb.asm.util.Textifier;
+import org.objectweb.asm.util.TraceMethodVisitor;
+
+import net.minecraft.launchwrapper.IClassTransformer;
+
 /**
- * 
+ *
  * @author AtomicStryker
- * 
+ *
  * Magic happens in here. MAGIC.
  * Obfuscated names will have to be updated with each Obfuscation change.
  *
  */
 public class DLTransformer implements IClassTransformer
 {
-    
+
     /* net/minecraft/world/World */
-    private String classNameWorld = "aid";
-      
-    /* (Lnet/minecraft/util/BlockPos;Lnet/minecraft/world/EnumSkyBlock;)I / func_175638_a */
-    private String targetMethodDesc = "(Lcm;Laij;)I";
-    
+    private String classNameWorld = "ajs";
+
+    /*
+     * (Lnet/minecraft/util/BlockPos;Lnet/minecraft/world/EnumSkyBlock;)I / func_175638_a
+     */
+    private String targetMethodDesc = "(Lco;Lajy;)I";
+
     /* net/minecraft/world/World.getRawLight / func_175638_a */
     private String computeLightValueMethodName = "a";
-    
-    /* (Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/BlockPos;)I */
-    private String goalInvokeDesc = "(Lars;Laih;Lcm;)I";
-    
+
+    /*
+     * (Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/BlockPos;)I
+     */
+    private String goalInvokeDesc = "(Latl;Lajw;Lco;)I";
+
     @Override
     public byte[] transform(String name, String newName, byte[] bytes)
     {
@@ -50,10 +59,10 @@ public class DLTransformer implements IClassTransformer
             goalInvokeDesc = "(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/math/BlockPos;)I";
             return handleWorldTransform(bytes, false);
         }
-        
+
         return bytes;
     }
-    
+
     private String insnToString(AbstractInsnNode insn)
     {
         insn.accept(mp);
@@ -64,15 +73,15 @@ public class DLTransformer implements IClassTransformer
     }
 
     private Printer printer = new Textifier();
-    private TraceMethodVisitor mp = new TraceMethodVisitor(printer); 
-    
+    private TraceMethodVisitor mp = new TraceMethodVisitor(printer);
+
     private byte[] handleWorldTransform(byte[] bytes, boolean obf)
     {
         System.out.println("**************** Dynamic Lights transform running on World, obf: "+obf+" *********************** ");
         ClassNode classNode = new ClassNode();
         ClassReader classReader = new ClassReader(bytes);
         classReader.accept(classNode, 0);
-        
+
         // find method to inject into
         for (MethodNode m : classNode.methods)
         {
@@ -80,30 +89,30 @@ public class DLTransformer implements IClassTransformer
                     && (!obf || m.desc.equals(targetMethodDesc)))
             {
                 System.out.println("In target method " + computeLightValueMethodName +":"+m.desc+ ", Patching!");
-                
+
                 /* before patch:
                    0: aload_2
 			       1: getstatic     #136                // Field net/minecraft/world/EnumSkyBlock.SKY:Lnet/minecraft/world/EnumSkyBlock;
 			       4: if_acmpne     18
-			       7: aload_0       
-			       8: aload_1       
+			       7: aload_0
+			       8: aload_1
 			       9: invokevirtual #160                // Method isAgainstSky:(Lnet/minecraft/util/BlockPos;)Z
 			      12: ifeq          18
 			      15: bipush        15
-			      17: ireturn       
-			      18: aload_0       
-			      19: aload_1       
+			      17: ireturn
+			      18: aload_0
+			      19: aload_1
 			      20: invokevirtual #80                 // Method getBlockState:(Lnet/minecraft/util/BlockPos;)Lnet/minecraft/block/state/IBlockState;
 			      23: invokeinterface #81,  1           // InterfaceMethod net/minecraft/block/state/IBlockState.getBlock:()Lnet/minecraft/block/Block;
-			      28: astore_3      
-			      29: aload_3       
-			      30: aload_0       
-			      31: aload_1       
+			      28: astore_3
+			      29: aload_3
+			      30: aload_0
+			      31: aload_1
 			      32: invokevirtual #486                // Method net/minecraft/block/Block.getLightValue:(Lnet/minecraft/world/IBlockAccess;Lnet/minecraft/util/BlockPos;)I
 			      35: istore        4
 			      [... many more...]
                  */
-                
+
                 /*
                 System.out.println("=== PRE PRINT===");
                 Iterator<AbstractInsnNode> printIter = m.instructions.iterator();
@@ -158,7 +167,7 @@ public class DLTransformer implements IClassTransformer
                 break;
             }
         }
-        
+
         ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS|ClassWriter.COMPUTE_FRAMES);
         classNode.accept(writer);
         return writer.toByteArray();

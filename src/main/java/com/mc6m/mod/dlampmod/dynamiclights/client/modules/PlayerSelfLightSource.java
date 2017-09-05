@@ -45,7 +45,7 @@ import java.util.Map.Entry;
  * Note you have to track this yourself. Dynamic Lights will accept and obey, but not recover should you
  * get stuck in the on or off state inside your own code. It will not revert to off on its own.
  */
-@Mod(modid = "DynamicLights_thePlayer", name = "Dynamic Lights Player Light", version = "1.1.3", dependencies = "required-after:DynamicLights")
+@Mod(modid = "dynamiclights_theplayer", name = "Dynamic Lights Player Light", version = "1.1.3", dependencies = "required-after:dynamiclights")
 public class PlayerSelfLightSource implements IDynamicLightSource {
     private EntityPlayer thePlayer;
     private World lastWorld;
@@ -87,10 +87,10 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent tick) {
-        if (lastWorld != FMLClientHandler.instance().getClient().theWorld || thePlayer != FMLClientHandler.instance().getClient().thePlayer) {
-            thePlayer = FMLClientHandler.instance().getClient().thePlayer;
+        if (lastWorld != FMLClientHandler.instance().getClient().world || thePlayer != FMLClientHandler.instance().getClient().player) {
+            thePlayer = FMLClientHandler.instance().getClient().player;
             if (thePlayer != null) {
-                lastWorld = thePlayer.worldObj;
+                lastWorld = thePlayer.world;
             } else {
                 lastWorld = null;
             }
@@ -113,7 +113,6 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
             }
         }
     }
-
 
     private void enableLight() {
         DynamicLights.addLightSource(this);

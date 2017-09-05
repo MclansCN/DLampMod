@@ -1,5 +1,4 @@
-[
-{
+[{
   "modid": "dlampmod",
   "name": "Dimesion Lamp",
   "description": "Dimesion Lamp single player mod.",
@@ -12,5 +11,4 @@
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
-}
-]
+}]

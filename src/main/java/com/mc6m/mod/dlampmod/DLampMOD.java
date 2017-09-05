@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION,updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.10.2]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.11.2]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
@@ -39,14 +39,15 @@ public class DLampMOD {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-//        JedisPoolConfig config = new JedisPoolConfig();
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
         dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
         dBlock.setCreativeTab(CreativeTabs.REDSTONE);
+
         lit_dBlock = new DLampBlock(true);
         lit_dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".lit_dlamp");
-        lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dLamp");
+        lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dlamp");
+
         GameRegistry.register(dBlock);
         GameRegistry.register(lit_dBlock);
         GameRegistry.register(new ItemBlock(dBlock).setRegistryName(DLampMOD.MOD_ID, dLampName));
@@ -57,7 +58,7 @@ public class DLampMOD {
         try {
             String newVersionStr = Tools.loadURLJson(updateJSON);
             JSONObject newVersionJson = new JSONObject(newVersionStr);
-            String newVersion = newVersionJson.getJSONObject("promos").getString("1.10.2-recommended");
+            String newVersion = newVersionJson.getJSONObject("promos").getString("1.11.2-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
         } catch (Exception e) {

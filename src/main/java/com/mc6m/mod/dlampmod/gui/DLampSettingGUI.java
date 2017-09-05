@@ -5,7 +5,6 @@ import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
@@ -47,7 +46,6 @@ public class DLampSettingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.addButton(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "保存"));
-        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         this.addButton(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "发现怪物警告：" + getBtnName("isMobTarget")));
         this.addButton(dynamicLightBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "动态光源：" + getBtnName("isDynamicLight")));
@@ -65,6 +63,7 @@ public class DLampSettingGUI extends GuiScreen {
         this.setColorText.setFocused(true);
         this.setColorText.setText((String) settingMap.get("color"));
         this.setColorText.setTextColor(0x00FF00);
+
         initOK = true;
     }
 
@@ -77,6 +76,7 @@ public class DLampSettingGUI extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         if (button == btnClose) { // 退出
             mc.displayGuiScreen(parentScreen);
+//            this.onGuiClosed();
         } else if (button == mobTargetBtn) { // 钓鱼
             cutSetting("isMobTarget");
             button.displayString = "发现怪物警告：" + getBtnName("isMobTarget");
@@ -102,16 +102,17 @@ public class DLampSettingGUI extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int par1, int par2, float par3) {
+    public void drawScreen(int mouseX, int mouseY, float par3) {
         if (initOK) {
             drawDefaultBackground();
             drawRect((int) (width * 0.1), (int) (height * 0.1), (int) (width * 0.9), (int) (height * 0.8), 0x80FFFFFF);
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会被控件(即按键)盖住.Z
-            super.drawScreen(par1, par2, par3);
+            super.drawScreen(mouseX, mouseY, par3);
+
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会盖在控件(即按键)之上.
             if (this.setColorText != null) {
                 this.setColorText.drawTextBox();
-                Minecraft.getMinecraft().fontRendererObj.drawString("§l矿灯设置", this.width / 2 - 20, 10, 0xffffff);
+                Minecraft.getMinecraft().fontRendererObj.drawString("矿灯设置", this.width / 2 - 20, 10, 0xffffff);
                 if (this.device != null) {
                     Minecraft.getMinecraft().fontRendererObj.drawString("(设备在线)", this.width / 2 - 20, 30, 0x00ff00);
                 } else {

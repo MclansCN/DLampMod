@@ -7,12 +7,12 @@ public class ItemConfigHelper
 {
     private final String SWILDCARD = "*";
     private final int WILDCARD = -1;
-    
+
     private Map<ItemData, Integer> dataMap;
-    
+
     public ItemConfigHelper(String configLine, int defaultValue)
     {
-        dataMap = new HashMap<ItemData, Integer>();
+        dataMap = new HashMap<>();
         for (String s : configLine.split(","))
         {
             try
@@ -27,12 +27,12 @@ public class ItemConfigHelper
             }
         }
     }
-    
+
     public int retrieveValue(Object loc, int meta)
     {
         if (loc != null)
         {
-        	String name = loc.toString();
+            String name = loc.toString();
             for (ItemData item : dataMap.keySet())
             {
                 if (item.matches(name, meta))
@@ -43,7 +43,7 @@ public class ItemConfigHelper
         }
         return -1;
     }
-    
+
     /**
      * Possible setups:
      * X := simple ID X, wildcards metadata
@@ -58,15 +58,15 @@ public class ItemConfigHelper
         int len = strings.length;
         int sm = len > 1 ? catchWildcard(strings[len > 3 ? 2 : 1]) : WILDCARD;
         int em = len > 2 ? catchWildcard(strings[len > 3 ? 3 : 2]) : sm;
-        
+
         if (!strings[0].contains(":"))
         {
             strings[0] = "minecraft:"+strings[0];
         }
-        
+
         return new ItemData(strings[0], sm, em);
     }
-    
+
     private int catchWildcard(String s)
     {
         if (s.equals(SWILDCARD))
@@ -75,36 +75,36 @@ public class ItemConfigHelper
         }
         return Integer.parseInt(s);
     }
-    
+
     private class ItemData
     {
         private String nameOf;
         final int startMeta;
         final int endMeta;
-        
+
         public ItemData(String name, int startmetarange, int endmetarange)
         {
             nameOf = name;
             startMeta = startmetarange;
             endMeta = endmetarange;
         }
-        
+
         @Override
         public String toString()
         {
             return nameOf+" "+startMeta+" "+endMeta;
         }
-        
+
         public boolean matches(String name, int meta)
         {
             return name.equals(nameOf) && isContained(startMeta, endMeta, meta);
         }
-        
+
         private boolean isContained(int s, int e, int i)
         {
             return (s == WILDCARD || i >= s) && (e == WILDCARD || i <= e);
         }
-        
+
         @Override
         public boolean equals(Object o)
         {
@@ -115,12 +115,12 @@ public class ItemConfigHelper
             }
             return false;
         }
-        
+
         @Override
         public int hashCode()
         {
             return nameOf.hashCode() + startMeta + endMeta;
         }
     }
-    
+
 }

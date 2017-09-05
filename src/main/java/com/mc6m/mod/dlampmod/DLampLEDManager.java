@@ -45,7 +45,7 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 钓鱼 */
     public void onClientTick(ClientTickEvent event) {
-        EntityPlayer localplayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer localplayer = Minecraft.getMinecraft().player;
         if (localplayer == null) return;
         if (localplayer.fishEntity == null) return;
         if ((localplayer.fishEntity != null) && (localplayer.fishEntity.motionX == 0.0D) && (localplayer.fishEntity.motionZ == 0.0D) && (localplayer.fishEntity.motionY < -0.02D)) {
@@ -96,7 +96,8 @@ public class DLampLEDManager {
                     dlwsd.removeSetting(did);
                     dlwsd.remove(pos);
                     DLampMOD.virtualdevicemap.remove(did);
-                    event.getPlayer().addChatMessage(new TextComponentString("§f【§3次元矿灯§f】§c数据已被清理，若要继续使用其功能，请重新绑定"));
+//                    event.getPlayer().addChatMessage(new TextComponentString("§f【§3次元矿灯§f】§c数据已被清理，若要继续使用其功能，请重新绑定"));
+                    event.getPlayer().sendMessage(new TextComponentString("§f【§3次元矿灯§f】§c数据已被清理，若要继续使用其功能，请重新绑定"));
                 }
             }
         }
@@ -109,7 +110,7 @@ public class DLampLEDManager {
         if (event.getState() != null) {
             // 如果是大佬灯方块
             if (event.getState().toString().equalsIgnoreCase("dlampmod:dLamp") || event.getState().toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
-                event.getPlayer().addChatMessage(new TextComponentString("§e 右击§f【§3次元矿灯§f】§e方块绑定现实中的设备。"));
+                event.getPlayer().sendMessage(new TextComponentString("§e 右击§f【§3次元矿灯§f】§e方块绑定现实中的设备。"));
             }
         }
     }
@@ -124,7 +125,6 @@ public class DLampLEDManager {
             dlwsd = DLWorldSavedData.get(world);
             Map<BlockPos, String> pos2did = dlwsd.getPos2did();
             DLampMOD.virtualdevicemap.clear();
-
             TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
@@ -158,7 +158,7 @@ public class DLampLEDManager {
                     timerswing.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            Minecraft.getMinecraft().thePlayer.addChatMessage(new TextComponentString("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
+                            Minecraft.getMinecraft().player.sendMessage(new TextComponentString("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
                         }
 
                     }, 10000);
@@ -173,7 +173,7 @@ public class DLampLEDManager {
     @SubscribeEvent
     /** 被怪盯上*/
     public void onLivingSetAttackTarget(LivingSetAttackTargetEvent event) {
-        EntityPlayer localplayer = Minecraft.getMinecraft().thePlayer;
+        EntityPlayer localplayer = Minecraft.getMinecraft().player;
         if (event.getTarget() != null
                 && event.getTarget() instanceof EntityPlayer
                 && localplayer.equals(event.getTarget())) {

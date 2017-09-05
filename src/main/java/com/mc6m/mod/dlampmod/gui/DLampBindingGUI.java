@@ -40,7 +40,6 @@ public class DLampBindingGUI extends GuiScreen {
         //每当界面被打开时调用
         //这里部署控件
         this.addButton(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
-        this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
         for (Object dido : DLampMOD.api.getDeviceList()) {
             String did = dido.toString();
@@ -57,7 +56,6 @@ public class DLampBindingGUI extends GuiScreen {
                 btnname = "次元矿灯(" + mac.substring(mac.length() - 6) + ")";
                 this.addButton(new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
             }
-
             i += 30;
         }
         initOK = true;
@@ -91,7 +89,7 @@ public class DLampBindingGUI extends GuiScreen {
             DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), true));
         }
 
-        player.addChatMessage(new TextComponentString("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));
+        player.sendMessage(new TextComponentString("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));
         mc.displayGuiScreen(parentScreen);
     }
 
@@ -104,7 +102,7 @@ public class DLampBindingGUI extends GuiScreen {
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会被控件(即按键)盖住.
             super.drawScreen(par1, par2, par3);
             //在这里绘制文本或纹理等非控件内容,这里绘制的东西会盖在控件(即按键)之上.
-            Minecraft.getMinecraft().fontRendererObj.drawString("§l局域网内的矿灯", this.width / 2 - 30, 10, 0xffffff);
+            Minecraft.getMinecraft().fontRendererObj.drawString("局域网内的矿灯", this.width / 2 - 30, 10, 0xffffff);
             Minecraft.getMinecraft().fontRendererObj.drawString("(请保持设备打开，如设备已经打开仍无发现请重启设备后再试)", this.width / 2 - 120, 30, 0xff0000);
 
             GlStateManager.color(1.0F, 1.0F, 1.0F);
