@@ -1,8 +1,0 @@
-{
-    "parent": "block/cube_bottom_top",
-    "textures": {
-        "bottom": "dlampmod:dl1_on",
-        "top": "dlampmod:dl1_on",
-        "side": "dlampmod:dl1_on"
-    }
-}
