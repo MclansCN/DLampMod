@@ -25,9 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     static final String MOD_NAME = "Dimesion Lamp";
-    static final String MOD_VERSION = "1.0.0";
+    static final String MOD_VERSION = "2.0.0";
     static final String updateJSON = "http://dl.mc6m.com/ModUpdate-HighMCVersion.json";
-    private static String dLampName = "dLamp";
     static DLampBlock dBlock;
     static DLampBlock lit_dBlock;
     public static DLampAPI api = new DLampAPI();
@@ -40,6 +39,7 @@ public class DLampMOD {
     public void preInit(FMLPreInitializationEvent event) {
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
+        String dLampName = "dLamp";
         dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
         dBlock.setCreativeTab(CreativeTabs.REDSTONE);
         lit_dBlock = new DLampBlock(true);
