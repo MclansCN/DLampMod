@@ -24,17 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.10.2]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
-    public static final String MOD_NAME = "Dimesion Lamp";
-    public static final String MOD_VERSION = "1.0.0";
-    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-HighMCVersion.json";
-
-    public static String dLampName = "dLamp";
-    public static DLampBlock dBlock;
-    public static DLampBlock lit_dBlock;
-    //    public static DimensionLamp api = new DimensionLamp();
+    static final String MOD_NAME = "Dimesion Lamp";
+    static final String MOD_VERSION = "1.0.0";
+    static final String updateJSON = "http://dl.mc6m.com/ModUpdate-HighMCVersion.json";
+    private static String dLampName = "dLamp";
+    static DLampBlock dBlock;
+    static DLampBlock lit_dBlock;
     public static DLampAPI api = new DLampAPI();
-    public static boolean needUpdate = false;
-    public static String newVersionHomepage = "";
+    static boolean needUpdate = false;
+    static String newVersionHomepage = "";
 
     public static ConcurrentHashMap<String, DLampVirtualDevice> virtualdevicemap = new ConcurrentHashMap<String, DLampVirtualDevice>();
 
