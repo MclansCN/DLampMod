@@ -1,7 +1,7 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.DLampAPI;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -21,7 +21,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION,updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.10.2]")
+@Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.10.2]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
     public static final String MOD_NAME = "Dimesion Lamp";
@@ -31,7 +31,8 @@ public class DLampMOD {
     public static String dLampName = "dLamp";
     public static DLampBlock dBlock;
     public static DLampBlock lit_dBlock;
-    public static DimensionLamp api = new DimensionLamp();
+    //    public static DimensionLamp api = new DimensionLamp();
+    public static DLampAPI api = new DLampAPI();
     public static boolean needUpdate = false;
     public static String newVersionHomepage = "";
 
@@ -39,7 +40,6 @@ public class DLampMOD {
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-//        JedisPoolConfig config = new JedisPoolConfig();
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
         dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);

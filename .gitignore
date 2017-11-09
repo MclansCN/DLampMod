@@ -1,19 +1,30 @@
-# exclude all
-/*
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-# need gradle
-!gradle/
-!gradlew
-!gradlew.bat
-!build.gradle
+# idea
+out
+*.ipr
+*.iws
+*.iml
+.idea
 
-# include markdowns
-!LICENSE
-!README.md
+# gradle
+build
+.gradle
 
-# include sourcecode
-!src/
-
-# include git important files
-!.gitmodules
-!.gitignore
+# other
+eclipse
+run
+CREDITS-fml.txt
+forge-1.10.2-12.18.3.2185-changelog.txt
+gradle.properties
+MinecraftForge-Credits.txt
+Paulscode IBXM Library License.txt
+Paulscode SoundSystem CodecIBXM License.txt
+README.txt
+classes/
