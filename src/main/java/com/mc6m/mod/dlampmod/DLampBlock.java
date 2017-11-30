@@ -10,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.sound.SoundEvent;
 
 import java.util.Map;
 import java.util.Random;
@@ -114,7 +113,7 @@ public class DLampBlock extends Block {
                 g = Tools.scale16To10(colorStr.substring(3, 5));
                 b = Tools.scale16To10(colorStr.substring(5, 7));
             }
-            dlvd.setTempRGB(r, g, b, SetColorType.FINAL_TRUE);
+            dlvd.setDefault(r, g, b, SetColorType.FINAL_TRUE);
         }
     }
 }

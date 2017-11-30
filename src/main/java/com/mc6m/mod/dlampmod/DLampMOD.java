@@ -1,7 +1,7 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.DLampAPI;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -23,43 +23,36 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.8]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
-    public static final String MOD_NAME = "Dimesion Lamp";
-    public static final String MOD_VERSION = "1.0.0";
-    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-LowMCVersion.json";
+    static final String MOD_NAME = "Dimesion Lamp";
+    static final String MOD_VERSION = "2.0.0";
+    static final String updateJSON = "http://dl.mc6m.com/ModUpdate-LowMCVersion.json";
 
-    public static String dLampName = "dLamp";
-    public static DLampBlock dBlock;
-    public static DLampBlock lit_dBlock;
-    public static DimensionLamp api = new DimensionLamp();
-
+    static DLampBlock dBlock;
+    static DLampBlock lit_dBlock;
+    static DLampAPI api = new DLampAPI();
     public static ConcurrentHashMap<String, DLampVirtualDevice> virtualdevicemap = new ConcurrentHashMap<String, DLampVirtualDevice>();
-
-    public static boolean needUpdate = false;
-    public static String newVersionHomepage = "";
+    static boolean needUpdate = false;
+    static String newVersionHomepage = "";
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
-//        dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
         dBlock.setCreativeTab(CreativeTabs.tabRedstone);
         lit_dBlock = new DLampBlock(true);
         lit_dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".lit_dlamp");
-//        lit_dBlock.setRegistryName(DLampMOD.MOD_ID, "lit_dLamp");
-//        GameRegistry.registerBlock(dBlock);
-//        GameRegistry.registerBlock(lit_dBlock);
+        String dLampName = "dLamp";
         GameRegistry.registerBlock(dBlock, dLampName);
         GameRegistry.registerBlock(lit_dBlock, "lit_dLamp");
         GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.stained_glass_pane, 1, 14), 'X', new ItemStack(Blocks.redstone_torch), '#', new ItemStack(Items.redstone));
-
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(dBlock), 0, new ModelResourceLocation(DLampMOD.MOD_ID + ":" + dLampName, "inventory"));
 
         // 更新
         try {
-        String newVersionStr = Tools.loadURLJson(updateJSON);
-        System.out.println(newVersionStr);
+            String newVersionStr = Tools.loadURLJson(updateJSON);
+            System.out.println(newVersionStr);
 
-        JSONObject newVersionJson = new JSONObject(newVersionStr);
+            JSONObject newVersionJson = new JSONObject(newVersionStr);
             String newVersion = newVersionJson.getJSONObject("promos").getString("1.8-recommended");
             needUpdate = Tools.versionCompare(MOD_VERSION, newVersion);
             newVersionHomepage = newVersionJson.getString("homepage");
