@@ -1,8 +1,8 @@
 package com.mc6m.mod.dlampmod.gui;
 
-import cn.zhhl.DLUtil.Device;
 import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
+import com.mclans.dlamplib.api.Device;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
@@ -49,16 +49,16 @@ public class DLampSettingGUI extends GuiScreen {
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "保存"));
         this.labelList.add(new GuiLabel(fontRendererObj, 1, this.width / 2 - 30, (int) (this.height * 0.4 - 10), 300, 20, 0xFFFFFF));
         int i = 20;
-        this.buttonList.add(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "发现怪物警告：" + getBtnName("isMobTarget")));
+        this.buttonList.add(mobTargetBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "被怪锁定警告（红色心跳）：" + getBtnName("isMobTarget")));
         this.buttonList.add(dynamicLightBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "动态光源：" + getBtnName("isDynamicLight")));
         i += 30;
-        this.buttonList.add(damageWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "被攻击警告：" + getBtnName("isDamageWarning")));
-        this.buttonList.add(pickupNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取物品通知：" + getBtnName("isPickupNotice")));
+        this.buttonList.add(damageWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "受伤警告（红色闪烁）：" + getBtnName("isDamageWarning")));
+        this.buttonList.add(pickupNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取物品（黄色闪烁）：" + getBtnName("isPickupNotice")));
         i += 30;
-        this.buttonList.add(healthWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "低血量警告：" + getBtnName("isHealthWarning")));
-        this.buttonList.add(pickupEXPNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "拾取经验通知：" + getBtnName("isPickupEXPNotice")));
+        this.buttonList.add(healthWarningBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "低血量（红/黄色呼吸）：" + getBtnName("isHealthWarning")));
+        this.buttonList.add(pickupEXPNoticeBtn = new GuiButton(this.buttonList.size(), this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20, "获得经验（蓝色闪烁）：" + getBtnName("isPickupEXPNotice")));
         i += 30;
-        this.buttonList.add(fishingBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "钓鱼通知：" + getBtnName("isFishing")));
+        this.buttonList.add(fishingBtn = new GuiButton(this.buttonList.size(), this.width / 2 - 150, (int) (this.height * 0.1 + i), 140, 20, "钓鱼通知（绿色闪烁）：" + getBtnName("isFishing")));
         i += 15;
         this.setColorText = new GuiTextField(1, fontRendererObj, this.width / 2 + 10, (int) (this.height * 0.1 + i), 140, 20);
         this.setColorText.setMaxStringLength(7);
@@ -79,25 +79,25 @@ public class DLampSettingGUI extends GuiScreen {
             mc.displayGuiScreen(parentScreen);
         } else if (button == mobTargetBtn) { // 钓鱼
             cutSetting("isMobTarget");
-            button.displayString = "发现怪物警告：" + getBtnName("isMobTarget");
+            button.displayString = "被怪锁定警告（红色心跳）：" + getBtnName("isMobTarget");
         } else if (button == damageWarningBtn) {
             cutSetting("isDamageWarning");
-            button.displayString = "被攻击警告：" + getBtnName("isDamageWarning");
+            button.displayString = "受伤警告（红色闪烁）：" + getBtnName("isDamageWarning");
         } else if (button == healthWarningBtn) {
             cutSetting("isHealthWarning");
-            button.displayString = "低血量警告：" + getBtnName("isHealthWarning");
+            button.displayString = "低血量（红/黄色呼吸）：" + getBtnName("isHealthWarning");
         } else if (button == dynamicLightBtn) {
             cutSetting("isDynamicLight");
             button.displayString = "动态光源：" + getBtnName("isDynamicLight");
         } else if (button == pickupNoticeBtn) {
             cutSetting("isPickupNotice");
-            button.displayString = "拾取物品通知：" + getBtnName("isPickupNotice");
+            button.displayString = "拾取物品（黄色闪烁）：" + getBtnName("isPickupNotice");
         } else if (button == pickupEXPNoticeBtn) {
             cutSetting("isPickupEXPNotice");
-            button.displayString = "拾取经验通知：" + getBtnName("isPickupEXPNotice");
+            button.displayString = "获得经验（蓝色闪烁）：" + getBtnName("isPickupEXPNotice");
         } else if (button == fishingBtn) {
             cutSetting("isFishing");
-            button.displayString = "钓鱼通知：" + getBtnName("isFishing");
+            button.displayString = "钓鱼通知（绿色闪烁）：" + getBtnName("isFishing");
         }
     }
 
