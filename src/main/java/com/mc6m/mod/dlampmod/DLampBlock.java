@@ -114,7 +114,7 @@ public class DLampBlock extends Block {
                 g = Tools.scale16To10(colorStr.substring(3, 5));
                 b = Tools.scale16To10(colorStr.substring(5, 7));
             }
-            dlvd.setTempRGB(r, g, b, SetColorType.FINAL_TRUE);
+            dlvd.setDefault(r, g, b, SetColorType.FINAL_TRUE);
         }
     }
 }
