@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'forge'
 
-version = "1.0"
+version = "2.0"
 group = "com.zhhl.DLmod" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "DLmod-1.7.10"
 
@@ -36,7 +36,7 @@ task makeMyJar(dependsOn: ['build'], type: Jar) {
 //    from('build/classes/main')
 //    from('build/resources/main')
     from(project.zipTree('D:\\code\\MCmod\\libs\\json-20170516.jar'))
-    from(project.zipTree('D:\\code\\MCmod\\libs\\dllib-201709041716.jar'))
+    from(project.zipTree('D:\\code\\MCmod\\libs\\DLampLib.jar'))
     from(project.zipTree('build\\libs\\' + archivesBaseName + '-' + version + '.jar'))
     destinationDir = file('build\\libs')
     include('com\\mc6m\\**\\*.class')
@@ -61,7 +61,7 @@ repositories {
     mavenCentral()
 }
 dependencies {
-    compile "com.zhhl:dllib:201709041716"
+    compile "com.mclm:DLampLib:2.0-3"
     compile "org.json:json:20170516"
 }
 

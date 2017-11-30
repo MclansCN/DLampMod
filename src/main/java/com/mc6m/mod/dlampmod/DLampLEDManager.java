@@ -1,24 +1,24 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.Device;
 import com.mc6m.mod.dlampmod.gui.DLampBindingGUI;
 import com.mc6m.mod.dlampmod.gui.DLampSettingGUI;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import com.mc6m.mod.dlampmod.save.SetColorType;
 import com.mc6m.mod.dlampmod.tools.BlockPos;
+import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.DLampAPI;
+import com.mclans.dlamplib.api.Device;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.common.network.FMLNetworkEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.event.ClickEvent;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
@@ -42,18 +42,6 @@ public class DLampLEDManager {
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    /** 钓鱼 */
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        EntityPlayer localplayer = Minecraft.getMinecraft().thePlayer;
-        if (localplayer == null) return;
-        if (localplayer.fishEntity == null) return;
-        if ((localplayer.fishEntity != null) && (localplayer.fishEntity.motionX == 0.0D) && (localplayer.fishEntity.motionZ == 0.0D) && (localplayer.fishEntity.motionY < -0.02D)) {
-            multiFlash(0, 255, 0, 500, SetColorType.IS_FINSHING);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
     public void onPlayerInteract(final PlayerInteractEvent event) {
         String blockname = event.world.getBlock(event.x, event.y, event.z).getUnlocalizedName();
         if (event.action.equals(PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
@@ -66,7 +54,7 @@ public class DLampLEDManager {
                     // TODO Auto-generated method stub
                     System.out.println(dlwsd.getPos2did());
                     if (dlwsd.getPos2did().containsKey(new BlockPos(event.x, event.y, event.z))) {
-                        DLampSettingGUI dlsgui = new DLampSettingGUI(Minecraft.getMinecraft().currentScreen, event, world, DLampMOD.api.getDevice(dlwsd.getPos2did().get(new BlockPos(event.x, event.y, event.z))));
+                        DLampSettingGUI dlsgui = new DLampSettingGUI(Minecraft.getMinecraft().currentScreen, event, world, (Device) DLampAPI.getDeviceList().get(dlwsd.getPos2did().get(new BlockPos(event.x, event.y, event.z))));
                         Minecraft.getMinecraft().displayGuiScreen(dlsgui);
                     } else {
                         DLampBindingGUI qrgui = new DLampBindingGUI(Minecraft.getMinecraft().currentScreen, event, world);
@@ -125,14 +113,32 @@ public class DLampLEDManager {
                     for (Map.Entry<BlockPos, String> entry : pos2did.entrySet()) {
                         BlockPos pos = entry.getKey();
                         String did = entry.getValue();
-
                         String blockname2 = world.getBlock(pos.getX(), pos.getY(), pos.getZ()).getUnlocalizedName();
-                        Device device = DLampMOD.api.getDevice(did);
-                        if (device != null) {
+                        Device device = (Device) DLampAPI.getDeviceList().get(did);
+                        boolean ishave = false;
+                        for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
+                            if (e.getValue().getDid().equals(did)) {
+                                ishave = true;
+                            }
+                        }
+                        if (device != null && !ishave) {
                             if (blockname2.equalsIgnoreCase("tile.dlampmod.dlamp")) {
-                                DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, device, false));
+                                DLampVirtualDevice dlvd = new DLampVirtualDevice(world, pos, device, false);
+                                dlvd.colorClear();
+                                DLampMOD.virtualdevicemap.put(did, dlvd);
                             } else if (blockname2.equalsIgnoreCase("tile.dlampmod.lit_dlamp")) {
-                                DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, device, true));
+                                DLampVirtualDevice dlvd = new DLampVirtualDevice(world, pos, device, true);
+                                DLampMOD.virtualdevicemap.put(did, dlvd);
+
+                                // 设置默认颜色
+                                Map settingMap = dlwsd.getSetting(dlwsd.getPos2did().get(pos));
+                                if (settingMap != null) {
+                                    String colorStr = (String) settingMap.get("color");
+                                    int r = Tools.scale16To10(colorStr.substring(1, 3));
+                                    int g = Tools.scale16To10(colorStr.substring(3, 5));
+                                    int b = Tools.scale16To10(colorStr.substring(5, 7));
+                                    dlvd.setDefault(r, g, b, SetColorType.FINAL_TRUE);
+                                }
                             } else {
                                 dlwsd.remove(pos);
                             }
@@ -154,7 +160,8 @@ public class DLampLEDManager {
                     timerswing.schedule(new TimerTask() {
                         @Override
                         public void run() {
-                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
+//                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§f【§b次元矿灯MOD§f】§c有更新，请到 " + DLampMOD.newVersionHomepage + " 下载更新！"));
+                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§f【§b次元矿灯MOD§f】§c有更新，请点击§e此处§c下载更新！").setChatStyle(new ChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, DLampMOD.newVersionHomepage))));
                         }
 
                     }, 10000);
@@ -175,32 +182,28 @@ public class DLampLEDManager {
                 && localplayer.equals(event.target)) {
             if (!isTarget) {
                 isTarget = true;
-                multiSetTempRGB(255, 0, 0, SetColorType.IS_MOB_TARGET);
+                multiHeartbeat(255, 0, 0, 500, SetColorType.IS_MOB_TARGET);
                 TimerTask task = new TimerTask() {
                     @Override
                     public void run() {
                         // TODO Auto-generated method stub
                         isTarget = false;
-                        multiSetTempRGB(0, 0, 0, SetColorType.IS_MOB_TARGET);
+                        multiReset();
                     }
 
                 };
-
                 targettimer.schedule(task, 500);
             } else {
                 targettimer.cancel();
                 targettimer = new Timer();
                 TimerTask task = new TimerTask() {
-
                     @Override
                     public void run() {
                         // TODO Auto-generated method stub
                         isTarget = false;
-                        multiSetTempRGB(0, 0, 0, SetColorType.IS_MOB_TARGET);
+                        multiReset();
                     }
-
                 };
-
                 targettimer.schedule(task, 500);
             }
         }
@@ -211,33 +214,9 @@ public class DLampLEDManager {
     /** 受伤*/
     public void onLivingHurt(LivingHurtEvent event) {
         if (event.entityLiving instanceof EntityPlayer) {
-            multiFlash(255, 255, 255, 100, SetColorType.IS_DAMAGE_WARNING);
-            float percent = event.entityLiving.getHealth() / event.entityLiving.getMaxHealth();
-            if (percent < 0.6 && percent > 0.2) {    // 2
-                if (healthlevel != 2) {
-                    healthlevel = 2;
-                    for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
-                        if (e.getValue().isOnline()) {
-                            e.getValue().timedFlash(255, 128, 0, 400, SetColorType.IS_DAMAGE_WARNING);
-                        }
-                    }
-                }
-            } else if (percent < 0.2) {    // 1
-                if (healthlevel != 1) {
-                    healthlevel = 1;
-                    for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
-                        if (e.getValue().isOnline()) {
-                            e.getValue().timedFlash(255, 0, 0, 300, SetColorType.IS_DAMAGE_WARNING);
-                        }
-                    }
-                }
-            } else                    // 3
-            {
-                if (healthlevel != 3) {
-                    healthlevel = 3;
-                    multiStopTimedFlash();
-                }
-            }
+            multiBlink(255, 0, 0, 500, SetColorType.IS_DAMAGE_WARNING);
+            float percent = (event.entityLiving.getHealth() - event.ammount) / event.entityLiving.getMaxHealth();
+            bloodWarn(percent);
         }
     }
 
@@ -247,32 +226,48 @@ public class DLampLEDManager {
     public void onLivingHeal(LivingHealEvent event) {
         if (event.entityLiving instanceof EntityPlayer) {
             float percent = event.entityLiving.getHealth() / event.entityLiving.getMaxHealth();
-            if (percent < 0.6 && percent > 0.2) {    // 2
-                if (healthlevel != 2) {
-                    healthlevel = 2;
-                    multiTimedFlash(255, 128, 0, 400, SetColorType.IS_HEALTH_WARNING);
-                }
+            bloodWarn(percent);
+        }
+    }
 
-            } else if (percent < 0.2) {    // 1
-                if (healthlevel != 1) {
-                    healthlevel = 1;
-                    multiTimedFlash(255, 0, 0, 300, SetColorType.IS_HEALTH_WARNING);
-                }
-            } else                    // 3
-            {
-                if (healthlevel != 3) {
-                    healthlevel = 3;
-                    multiStopTimedFlash();
-                }
+    private void bloodWarn(float percent) {
+        if (percent <= 0.33) {
+            if (1 != healthlevel) {
+                healthlevel = 1;
+                multiBLN(255, 0, 0, SetColorType.IS_HEALTH_WARNING);
+            }
+        } else if (percent <= 0.67) {
+            if (2 != healthlevel) {
+                healthlevel = 2;
+                multiBLN(255, 255, 0, SetColorType.IS_HEALTH_WARNING);
+            }
+
+        } else {
+            if (3 != healthlevel) {
+                healthlevel = 3;
+                multiReset();
             }
         }
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
+    /** 重生 */
+    public void onLivingSpawn(LivingSpawnEvent event) {
+        System.out.println(event.entityLiving.toString());
+        if (event.entityLiving instanceof EntityPlayer) {
+            System.out.println("111111111111111111111111111111111111111111111111111111111111");
+            multiReset();
+        }
+    }
+
+
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    /** GG */
     public void onLivingDeath(LivingDeathEvent event) {
         if (event.entityLiving instanceof EntityPlayer) {
-            multiReset();
+            multiRGB(255, 255, 255, SetColorType.FINAL_TRUE);
         }
     }
 
@@ -281,7 +276,7 @@ public class DLampLEDManager {
     /** 获得经验 */
     public void onPlayerPickupXp(PlayerPickupXpEvent event) {
         if (event.entityPlayer != null) {
-            multiFlash(255, 255, 0, 100, SetColorType.IS_PICKUP_EXP_NPTICE);
+            multiBlink(0, 0, 255, 100, SetColorType.IS_PICKUP_EXP_NPTICE);
         }
     }
 
@@ -291,55 +286,72 @@ public class DLampLEDManager {
     /** 获得物品 */
     public void onEntityItemPickup(EntityItemPickupEvent event) {
         if (event.entityPlayer != null) {
-            multiFlash(0, 255, 255, 100, SetColorType.IS_PICKUP_NOTICE);
+            multiBlink(255, 255, 0, 100, SetColorType.IS_PICKUP_NOTICE);
         }
     }
 
-    private void multiSetRGB(int r, int g, int b) {
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    /** 钓鱼 */
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        EntityPlayer localplayer = Minecraft.getMinecraft().thePlayer;
+        if (localplayer == null) return;
+        if (localplayer.fishEntity == null) return;
+        if (localplayer.fishEntity.motionX == 0.0D && localplayer.fishEntity.motionZ == 0.0D && localplayer.fishEntity.motionY < -0.02D) {
+            multiBlink(0, 255, 0, 500, SetColorType.IS_FINSHING);
+        }
+    }
+
+    // 闪一下
+    private void multiBlink(int r, int g, int b, int millisec, SetColorType sct) {
         for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
             if (e.getValue().isOnline()) {
-                e.getValue().setRGB(r, g, b);
+                e.getValue().colorBlink(r, g, b, sct);
             }
         }
     }
 
-    private void multiFlash(int r, int g, int b, int millisec, SetColorType sct) {
-        DLWorldSavedData dlwsd = DLWorldSavedData.get(world);
+    // 设置颜色
+    private void multiRGB(int r, int g, int b, SetColorType sct) {
         for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
             if (e.getValue().isOnline()) {
-                e.getValue().flash(r, g, b, millisec, sct);
+                e.getValue().colorSetRGB(r, g, b, sct);
             }
         }
     }
 
-    private void multiTimedFlash(int r, int g, int b, int peroid, SetColorType sct) {
+    // 呼吸
+    private void multiBLN(int r, int g, int b, SetColorType sct) {
         for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
             if (e.getValue().isOnline()) {
-                e.getValue().timedFlash(r, g, b, peroid, sct);
+                e.getValue().colorSetBLN(r, g, b, sct);
             }
         }
     }
 
+    // 心跳
+    private void multiHeartbeat(int r, int g, int b, int off2on_interval, SetColorType sct) {
+        for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
+            if (e.getValue().isOnline()) {
+                e.getValue().colorSetMonoHeartbeat(r, g, b, off2on_interval, sct);
+            }
+        }
+    }
+
+    // 恢复默认
     private void multiReset() {
         for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
             if (e.getValue().isOnline()) {
-                e.getValue().reset();
+                e.getValue().colorReset();
             }
         }
     }
 
-    private void multiStopTimedFlash() {
+    // 清理数据
+    private void multiClear() {
         for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
             if (e.getValue().isOnline()) {
-                e.getValue().stopTimedFlash();
-            }
-        }
-    }
-
-    private void multiSetTempRGB(int r, int g, int b, SetColorType sct) {
-        for (Entry<String, DLampVirtualDevice> e : DLampMOD.virtualdevicemap.entrySet()) {
-            if (e.getValue().isOnline()) {
-                e.getValue().setTempRGB(r, g, b, sct);
+                e.getValue().colorClear();
             }
         }
     }

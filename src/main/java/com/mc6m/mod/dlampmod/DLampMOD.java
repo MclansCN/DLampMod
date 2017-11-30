@@ -1,7 +1,7 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.DLampAPI;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -19,17 +19,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, acceptedMinecraftVersions = "[1.7.10]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
-    public static final String MOD_NAME = "Dimesion Lamp";
-    public static final String MOD_VERSION = "1.0.0";
-    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-LowMCVersion.json";
-
-    public static String dLampName = "dLamp";
-    public static DLampBlock dBlock;
-    public static DLampBlock lit_dBlock;
-    public static DimensionLamp api = new DimensionLamp();
-    public static boolean needUpdate = false;
-    public static String newVersionHomepage = "";
-
+    static final String MOD_NAME = "Dimesion Lamp";
+    static final String MOD_VERSION = "2.0.0";
+    private static final String updateJSON = "http://dl.mc6m.com/ModUpdate-LowMCVersion.json";
+    static DLampBlock dBlock;
+    static DLampBlock lit_dBlock;
+    public static DLampAPI api = new DLampAPI();
+    static boolean needUpdate = false;
+    static String newVersionHomepage = "";
     public static ConcurrentHashMap<String, DLampVirtualDevice> virtualdevicemap = new ConcurrentHashMap<String, DLampVirtualDevice>();
 
     //    @Mod.EventHandler
@@ -42,6 +39,7 @@ public class DLampMOD {
         lit_dBlock = new DLampBlock(true);
         lit_dBlock.setBlockName(DLampMOD.MOD_ID + ".lit_dlamp");
         lit_dBlock.setBlockTextureName("dl_on");
+        String dLampName = "dLamp";
         GameRegistry.registerBlock(dBlock, dLampName);
         GameRegistry.registerBlock(lit_dBlock, "lit_dLamp");
         GameRegistry.addRecipe(new ItemStack(dBlock, 1), "#@#", "@X@", "#@#", '@', new ItemStack(Blocks.stained_glass_pane, 1, 14), 'X', new ItemStack(Blocks.redstone_torch), '#', new ItemStack(Items.redstone));

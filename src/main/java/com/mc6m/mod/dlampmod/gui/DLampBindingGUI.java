@@ -3,12 +3,11 @@ package com.mc6m.mod.dlampmod.gui;
 import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.DLampVirtualDevice;
 import com.mc6m.mod.dlampmod.tools.BlockPos;
-import net.minecraft.block.Block;
+import com.mclans.dlamplib.api.DLampAPI;
+import com.mclans.dlamplib.api.Device;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
@@ -16,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import sun.awt.GlobalCursorManager;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,7 +41,7 @@ public class DLampBindingGUI extends GuiScreen {
         this.buttonList.add(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
 
         int i = 20;
-        for (Object dido : DLampMOD.api.getDeviceList()) {
+        for (Object dido : DLampAPI.getDeviceList().keySet()) {
             String did = dido.toString();
             devicebuttonmap.put(this.buttonList.size(), did);
             String btnname;
@@ -54,7 +52,7 @@ public class DLampBindingGUI extends GuiScreen {
                 this.buttonList.add(b = new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
                 b.enabled = false;
             } else {
-                String mac = DLampMOD.api.getDevice(did).getMac();
+                String mac = ((Device) DLampAPI.getDeviceList().get(did)).getMac();
                 btnname = "次元矿灯(" + mac.substring(mac.length() - 6) + ")";
                 this.buttonList.add(new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
             }
@@ -88,9 +86,9 @@ public class DLampBindingGUI extends GuiScreen {
 //        IBlockState block = world.getBlockState(pos);
         String blockName = world.getBlock(pos.getX(), pos.getY(), pos.getZ()).getUnlocalizedName();
         if (blockName.equalsIgnoreCase("tile.dlampmod.dlamp")) {
-            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), false));
+            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, (Device) DLampAPI.getDeviceList().get(did), false));
         } else if (blockName.equalsIgnoreCase("tile.dlampmod.lit_dlamp")) {
-            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), true));
+            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, (Device) DLampAPI.getDeviceList().get(did), true));
         }
 
         player.addChatMessage(new ChatComponentText("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));
@@ -99,7 +97,7 @@ public class DLampBindingGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int par1, int par2, float par3) {
-        if (initOK){
+        if (initOK) {
             drawDefaultBackground();
             drawRect((int) (width * 0.1), (int) (height * 0.1), (int) (width * 0.9), (int) (height * 0.8), 0x80FFFFFF);
 
