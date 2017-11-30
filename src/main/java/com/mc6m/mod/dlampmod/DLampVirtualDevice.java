@@ -1,15 +1,12 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.Device;
 import com.mc6m.mod.dlampmod.save.DLWorldSavedData;
 import com.mc6m.mod.dlampmod.save.SetColorType;
-import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.Device;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class DLampVirtualDevice {
     private String did;
@@ -30,13 +27,7 @@ public class DLampVirtualDevice {
     private DLWorldSavedData dlwsd;
     private String color = "#ffffff";
     private boolean isLightOpen = false;
-
-    private Timer timer = new Timer();
-    private Timer timedtimer = new Timer();
-    private boolean flashing = false;
-    private boolean timedflashing = false;
-
-    private int tempR = 0, tempG = 0, tempB = 0;
+    private int defaultR = 0, defaultG = 0, defaultB = 0;
 
     public DLampVirtualDevice(World world, BlockPos pos, Device device, boolean isLightOpen) {
         this.worldname = world.getSeed() + "";
@@ -71,7 +62,11 @@ public class DLampVirtualDevice {
         return isLightOpen;
     }
 
-    public void setLightOpen(boolean lightOpen) {
+    String getDid() {
+        return did;
+    }
+
+    void setLightOpen(boolean lightOpen) {
         isLightOpen = lightOpen;
     }
 
@@ -79,7 +74,7 @@ public class DLampVirtualDevice {
         return this.isOnline;
     }
 
-    public boolean dynamicLight(){
+    public boolean dynamicLight() {
         return this.isDynamicLight;
     }
 
@@ -96,106 +91,172 @@ public class DLampVirtualDevice {
     }
 
     public boolean getLEDOn() {
-        return this.device.getDeviceLight().isStats();
+        return this.device.getDataPoint().isLamp_on();
     }
 
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+//    public void setName(String name) {
+//        this.name = name;
+//    }
 
-    public void setTempRGB(int r, int g, int b, SetColorType sct) {
+    // 设置默认颜色
+    public void setDefault(int r, int g, int b, SetColorType sct) {
         if (getIsOpen(sct)) {
-            if (sct == SetColorType.IS_MOB_TARGET && r == 0 && g == 0 && b == 0 && this.isLightOpen) {
-                r = Tools.scale16To10(this.color.substring(1, 3));
-                g = Tools.scale16To10(this.color.substring(3, 5));
-                b = Tools.scale16To10(this.color.substring(5, 7));
-            }
-            tempR = r;
-            tempG = g;
-            tempB = b;
-            setRGB(r, g, b);
+            System.out.println("设置默认颜色:" + r + "," + g + "," + b);
+            defaultR = r;
+            defaultG = g;
+            defaultB = b;
+            colorSetRGB(r, g, b);
         }
     }
 
-    public void connected() {
-        this.isOnline = true;
-
-    }
-
-    public void disconnected() {
-        this.isOnline = false;
-    }
-
-    public void setRGB(int r, int g, int b) {
+    // 设置颜色
+    private void colorSetRGB(int r, int g, int b) {
+        System.out.println("设置颜色:" + r + "," + g + "," + b);
         device.setRGB(r, g, b);
     }
 
-    public void flash(int r, int g, int b, int millisec, SetColorType sct) {
+    // 带权限的RGB
+    public void colorSetRGB(int r, int g, int b, SetColorType sct) {
         if (getIsOpen(sct)) {
-            if (flashing) {
-                timer.cancel();
-                timer = new Timer();
-            }
-            flashing = true;
-            device.setRGB(r, g, b);
-            TimerTask task = new TimerTask() {
-
-                @Override
-                public void run() {
-                    // TODO Auto-generated method stub
-                    device.setRGB(tempR, tempG, tempB);
-                    flashing = false;
-                }
-            };
-            timer.schedule(task, millisec);
+            System.out.println("带权限的RGB:" + r + "," + g + "," + b);
+            colorSetRGB(r, g, b);
         }
     }
 
-    public void timedFlash(final int r, final int g, final int b, int period, SetColorType sct) {
+    // 设置心跳
+    public void colorSetMonoHeartbeat(int r, int g, int b, int off2on_interval, SetColorType sct) {
         if (getIsOpen(sct)) {
-            stopTimedFlash();
-            timedflashing = true;
-            device.setRGB(0, 0, 0);
-            TimerTask task = new TimerTask() {
-                boolean on = false;
-
-                @Override
-                public void run() {
-                    // TODO Auto-generated method stub
-                    if (flashing) return;
-                    if (on) {
-
-                        device.setRGB(tempR, tempG, tempB);
-                        on = false;
-                    } else {
-                        device.setRGB(r, g, b);
-                        on = true;
-                    }
-                }
-
-            };
-            timedtimer.schedule(task, 0, period);
+            System.out.println("设置心跳:" + r + "," + g + "," + b);
+            device.setMonoHeartbeat(new int[]{r, g, b}, off2on_interval);
         }
     }
 
-    public void stopTimedFlash() {
-        timedflashing = false;
-        timedtimer.cancel();
-        setRGB(tempR, tempG, tempB);
-        timedtimer = new Timer();
+    // 闪一下
+    public void colorBlink(int r, int g, int b, SetColorType sct) {
+        if (getIsOpen(sct)) {
+            System.out.println("闪一下:" + r + "," + g + "," + b);
+            device.runBlink(new int[]{r, g, b}, 1, 500, 0);
+//            device.setBlink(new int[]{r, g, b});
+        }
     }
 
-    public void reset() {
-        stopTimedFlash();
-        tempR = 0;
-        tempG = 0;
-        tempB = 0;
-        setRGB(0, 0, 0);
+    // 呼吸
+    public void colorSetBLN(int r, int g, int b, SetColorType sct) {
+        if (getIsOpen(sct)) {
+            System.out.println("呼吸:" + r + "," + g + "," + b);
+            device.setMonoBLN(new int[]{r, g, b}, 500, 500, 100);
+        }
     }
+
+    // 恢复默认
+    public void colorReset() {
+        System.out.println("恢复默认");
+        colorSetRGB(defaultR, defaultG, defaultB);
+    }
+
+    // 清除各种效果
+    public void colorClear() {
+        System.out.println("清除各种效果");
+        device.clearAll();
+        defaultR = 0;
+        defaultG = 0;
+        defaultB = 0;
+    }
+
+//
+//    public void setTempRGB(int r, int g, int b, SetColorType sct) {
+//        if (getIsOpen(sct)) {
+//            if (sct == SetColorType.IS_MOB_TARGET && r == 0 && g == 0 && b == 0 && this.isLightOpen) {
+//                r = Tools.scale16To10(this.color.substring(1, 3));
+//                g = Tools.scale16To10(this.color.substring(3, 5));
+//                b = Tools.scale16To10(this.color.substring(5, 7));
+//            }
+//            tempR = r;
+//            tempG = g;
+//            tempB = b;
+//            setRGB(r, g, b);
+//        }
+//    }
+//
+//    public void connected() {
+//        this.isOnline = true;
+//
+//    }
+//
+//    public void disconnected() {
+//        this.isOnline = false;
+//    }
+//
+//    public void setRGB(int r, int g, int b) {
+//        device.setRGB(r, g, b);
+//    }
+//
+//    public void flash(int r, int g, int b, int millisec, SetColorType sct) {
+//        if (getIsOpen(sct)) {
+//            if (flashing) {
+//                timer.cancel();
+//                timer = new Timer();
+//            }
+//            flashing = true;
+//            device.setRGB(r, g, b);
+//            TimerTask task = new TimerTask() {
+//
+//                @Override
+//                public void run() {
+//                    // TODO Auto-generated method stub
+//                    device.setRGB(tempR, tempG, tempB);
+//                    flashing = false;
+//                }
+//            };
+//            timer.schedule(task, millisec);
+//        }
+//    }
+//
+//    public void timedFlash(final int r, final int g, final int b, int period, SetColorType sct) {
+//        if (getIsOpen(sct)) {
+//            stopTimedFlash();
+//            timedflashing = true;
+//            device.setRGB(0, 0, 0);
+//            TimerTask task = new TimerTask() {
+//                boolean on = false;
+//
+//                @Override
+//                public void run() {
+//                    // TODO Auto-generated method stub
+//                    if (flashing) return;
+//                    if (on) {
+//
+//                        device.setRGB(tempR, tempG, tempB);
+//                        on = false;
+//                    } else {
+//                        device.setRGB(r, g, b);
+//                        on = true;
+//                    }
+//                }
+//
+//            };
+//            timedtimer.schedule(task, 0, period);
+//        }
+//    }
+//
+//    public void stopTimedFlash() {
+//        timedflashing = false;
+//        timedtimer.cancel();
+//        setRGB(tempR, tempG, tempB);
+//        timedtimer = new Timer();
+//    }
+//
+//    public void reset() {
+//        stopTimedFlash();
+//        tempR = 0;
+//        tempG = 0;
+//        tempB = 0;
+//        setRGB(0, 0, 0);
+//    }
 
     private boolean getIsOpen(SetColorType sct) {
         boolean isOpen = false;

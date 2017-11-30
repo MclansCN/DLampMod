@@ -2,6 +2,8 @@ package com.mc6m.mod.dlampmod.gui;
 
 import com.mc6m.mod.dlampmod.DLampMOD;
 import com.mc6m.mod.dlampmod.DLampVirtualDevice;
+import com.mclans.dlamplib.api.DLampAPI;
+import com.mclans.dlamplib.api.Device;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -41,7 +43,7 @@ public class DLampBindingGUI extends GuiScreen {
         //这里部署控件
         this.addButton(btnClose = new GuiButton(0, (int) (width * 0.5) - 40, (int) (height * 0.85), 80, 20, "关闭"));
         int i = 20;
-        for (Object dido : DLampMOD.api.getDeviceList()) {
+        for (Object dido : DLampAPI.getDeviceList().keySet()) {
             String did = dido.toString();
             devicebuttonmap.put(this.buttonList.size(), did);
             String btnname;
@@ -52,7 +54,7 @@ public class DLampBindingGUI extends GuiScreen {
                 this.addButton(b = new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
                 b.enabled = false;
             } else {
-                String mac = DLampMOD.api.getDevice(did).getMac();
+                String mac = ((Device) DLampAPI.getDeviceList().get(did)).getMac();
                 btnname = "次元矿灯(" + mac.substring(mac.length() - 6) + ")";
                 this.addButton(new GuiButton(this.buttonList.size(), (int) (this.width * 0.15), (int) (this.height * 0.1 + i), 140, 20, btnname));
             }
@@ -84,9 +86,9 @@ public class DLampBindingGUI extends GuiScreen {
         String did = devicebuttonmap.get(button.id);
         IBlockState block = world.getBlockState(pos);
         if (block.toString().equalsIgnoreCase("dlampmod:dLamp")) {
-            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), false));
+            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, (Device) DLampAPI.getDeviceList().get(did), false));
         } else if (block.toString().equalsIgnoreCase("dlampmod:lit_dLamp")) {
-            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, DLampMOD.api.getDevice(did), true));
+            DLampMOD.virtualdevicemap.put(did, new DLampVirtualDevice(world, pos, (Device) DLampAPI.getDeviceList().get(did), true));
         }
 
         player.sendMessage(new TextComponentString("§f【§b次元矿灯§f】§a绑定成功，再次右键矿灯方块可进行设置"));

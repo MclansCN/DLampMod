@@ -1,7 +1,7 @@
 package com.mc6m.mod.dlampmod;
 
-import cn.zhhl.DLUtil.api.DimensionLamp;
 import com.mc6m.mod.dlampmod.tools.Tools;
+import com.mclans.dlamplib.api.DLampAPI;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -24,16 +24,15 @@ import java.util.concurrent.ConcurrentHashMap;
 @Mod(modid = DLampMOD.MOD_ID, name = DLampMOD.MOD_NAME, version = DLampMOD.MOD_VERSION, updateJSON = DLampMOD.updateJSON, acceptedMinecraftVersions = "[1.11.2]")
 public class DLampMOD {
     public static final String MOD_ID = "dlampmod";
-    public static final String MOD_NAME = "Dimesion Lamp";
-    public static final String MOD_VERSION = "1.0.0";
-    public static final String updateJSON = "http://dlamp.mc6m.com/ModUpdate-HighMCVersion.json";
+    static final String MOD_NAME = "Dimesion Lamp";
+    static final String MOD_VERSION = "2.0.0";
+    static final String updateJSON = "http://dl.mc6m.com/ModUpdate-HighMCVersion.json";
 
-    public static String dLampName = "dLamp";
-    public static DLampBlock dBlock;
-    public static DLampBlock lit_dBlock;
-    public static DimensionLamp api = new DimensionLamp();
-    public static boolean needUpdate = false;
-    public static String newVersionHomepage = "";
+    static DLampBlock dBlock;
+    static DLampBlock lit_dBlock;
+    static DLampAPI api = new DLampAPI();
+    static boolean needUpdate = false;
+    static String newVersionHomepage = "";
 
     public static ConcurrentHashMap<String, DLampVirtualDevice> virtualdevicemap = new ConcurrentHashMap<String, DLampVirtualDevice>();
 
@@ -41,6 +40,7 @@ public class DLampMOD {
     public void preInit(FMLPreInitializationEvent event) {
         dBlock = new DLampBlock(false);
         dBlock.setUnlocalizedName(DLampMOD.MOD_ID + ".dlamp");
+        String dLampName = "dLamp";
         dBlock.setRegistryName(DLampMOD.MOD_ID, dLampName);
         dBlock.setCreativeTab(CreativeTabs.REDSTONE);
 

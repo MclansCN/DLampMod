@@ -34,11 +34,7 @@ public class DLampBlock extends Block {
     }
 
     public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {
-        if (Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) == 1
-                && Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) != 0
-                && p5EP != null
-                && par2 * par3 != 0
-                && par2 * par4 != 0) {
+        if (Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) == 1 && Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) != 0 && par2 * par3 != 0 && par2 * par4 != 0) {
             par1World.setBlockState(new BlockPos(par2, par3, par4), Block.getStateById(4));
 
         }
@@ -99,7 +95,7 @@ public class DLampBlock extends Block {
                 g = Tools.scale16To10(colorStr.substring(3, 5));
                 b = Tools.scale16To10(colorStr.substring(5, 7));
             }
-            dlvd.setTempRGB(r, g, b, SetColorType.FINAL_TRUE);
+            dlvd.setDefault(r, g, b, SetColorType.FINAL_TRUE);
         }
     }
 }
