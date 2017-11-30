@@ -1,10 +1,12 @@
 package com.mc6m.mod.dlampmod.dynamiclights.client;
 
+import com.mc6m.mod.dlampmod.dynamiclights.client.modules.PlayerSelfLightSource;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
@@ -107,7 +109,6 @@ public class DynamicLights {
                 nextKeyTriggerTime = System.currentTimeMillis() + 1000L;
                 globalLightsOff = !globalLightsOff;
                 mcinstance.ingameGUI.getChatGUI().printChatMessage(new TextComponentTranslation("Dynamic Lights globally " + (globalLightsOff ? "off" : "on")));
-
                 World world = mcinstance.theWorld;
                 if (world != null) {
                     if (worldLights != null) {

@@ -47,12 +47,10 @@ import java.util.Map.Entry;
  */
 @Mod(modid = "DynamicLights_thePlayer", name = "Dynamic Lights Player Light", version = "1.1.3", dependencies = "required-after:DynamicLights")
 public class PlayerSelfLightSource implements IDynamicLightSource {
-    private EntityPlayer thePlayer;
+    public EntityPlayer thePlayer;
     private World lastWorld;
     private int lightLevel;
     private boolean enabled;
-    private ItemConfigHelper itemsMap;
-    private ItemConfigHelper notWaterProofItems;
     private Configuration config;
 
     public boolean fmlOverrideEnable;
@@ -76,11 +74,11 @@ public class PlayerSelfLightSource implements IDynamicLightSource {
 
         Property itemsList = config.get(Configuration.CATEGORY_GENERAL, "LightItems", "torch,glowstone=12,glowstone_dust=10,lit_pumpkin,lava_bucket,redstone_torch=10,redstone=10,golden_helmet=14,golden_horse_armor=15");
         itemsList.setComment("Item IDs that shine light while held. Armor Items also work when worn. [ONLY ON YOURSELF]");
-        itemsMap = new ItemConfigHelper(itemsList.getString(), 15);
+        ItemConfigHelper itemsMap = new ItemConfigHelper(itemsList.getString(), 15);
 
         Property notWaterProofList = config.get(Configuration.CATEGORY_GENERAL, "TurnedOffByWaterItems", "torch,lava_bucket");
         notWaterProofList.setComment("Item IDs that do not shine light when held in water, have to be present in LightItems.");
-        notWaterProofItems = new ItemConfigHelper(notWaterProofList.getString(), 1);
+        ItemConfigHelper notWaterProofItems = new ItemConfigHelper(notWaterProofList.getString(), 1);
 
         config.save();
     }
