@@ -25,7 +25,7 @@ compileJava {
 task makeMyJar(dependsOn: ['build'], type: Jar) {
     archiveName = archivesBaseName + '-Release.jar'
     from(project.zipTree('D:\\code\\MCmod\\libs\\json-20170516.jar'))
-    from(project.zipTree('D:\\code\\MCmod\\libs\\dllib-201709041716.jar'))
+    from(project.zipTree('D:\\code\\MCmod\\libs\\DLampLib.jar'))
     from(project.zipTree('build\\libs\\' + archivesBaseName + '-' + version + '.jar'))
     destinationDir = file('build\\libs')
     include('com\\mc6m\\**\\*.class')
