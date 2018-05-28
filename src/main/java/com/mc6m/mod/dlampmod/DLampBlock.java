@@ -36,7 +36,6 @@ public class DLampBlock extends Block {
     public void onBlockClicked(World par1World, int par2, int par3, int par4, EntityPlayer p5EP) {
         if (Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) == 1 && Item.getIdFromItem(p5EP.inventory.getCurrentItem().getItem()) != 0 && par2 * par3 != 0 && par2 * par4 != 0) {
             par1World.setBlockState(new BlockPos(par2, par3, par4), Block.getStateById(4));
-
         }
         System.out.println("debug tick.");
     }
@@ -48,6 +47,7 @@ public class DLampBlock extends Block {
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_neighborChanged_5_) {
         if (!worldIn.isRemote && worldIn.getSeed() != 0) {
             if (this.isOn && !worldIn.isBlockPowered(pos)) {
+                worldIn.setBlockState(pos, DLampMOD.dBlock.getDefaultState(), 2);
                 worldIn.scheduleUpdate(pos, this, 4);
                 setColor(worldIn, pos, false);
             } else if (!this.isOn && worldIn.isBlockPowered(pos)) {
@@ -74,6 +74,7 @@ public class DLampBlock extends Block {
     }
 
     private void setColor(World worldIn, BlockPos pos, boolean isOpen) {
+        System.out.println(isOpen);
         DLWorldSavedData dlwsd = DLWorldSavedData.get(worldIn);
         String did = dlwsd.getPos2did().get(pos);
         Map settingMap = null;
